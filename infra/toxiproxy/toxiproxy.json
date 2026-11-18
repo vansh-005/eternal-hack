@@ -1,0 +1,4 @@
+[
+  { "name": "postgres", "listen": "0.0.0.0:15432", "upstream": "postgres:5432", "enabled": true },
+  { "name": "oms",      "listen": "0.0.0.0:18090", "upstream": "mock-oms:8090", "enabled": true }
+]

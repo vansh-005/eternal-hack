@@ -1,0 +1,40 @@
+server.port: 8090
+
+spring:
+  application.name: mock-oms
+  threads.virtual.enabled: true
+  datasource:
+    url: ${OMS_DB_URL:jdbc:postgresql://postgres:5432/nocook}
+    username: ${OMS_DB_USER:oms_app}
+    password: ${OMS_DB_PASSWORD:oms}
+    hikari: { maximum-pool-size: 20, connection-timeout: 2000 }
+  flyway: { schemas: oms, default-schema: oms, locations: "classpath:db/migration/oms" }
+  rabbitmq:
+    host: ${RABBIT_HOST:rabbitmq}
+    port: ${RABBIT_PORT:5672}
+    username: nocook
+    password: nocook
+    publisher-confirm-type: simple
+    template.observation-enabled: true
+
+oms:
+  relay: { tick: 20ms, batch: 200, confirm-timeout: 5000 }
+
+management:
+  endpoints.web.exposure.include: health,info,metrics
+  otlp.metrics.export: { url: "${OTLP_HTTP:http://lgtm:4318}/v1/metrics", step: 5s, base-time-unit: seconds }
+  opentelemetry:
+    tracing.export.otlp.endpoint: ${OTLP_HTTP:http://lgtm:4318}/v1/traces
+    logging.export.otlp.endpoint: ${OTLP_HTTP:http://lgtm:4318}/v1/logs
+  tracing.sampling.probability: ${TRACING_SAMPLE:1.0}
+  metrics.distribution:
+    # Map keys containing dots MUST use bracket notation in YAML.
+    percentiles-histogram:
+      "[oms]": true
+      "[http.server.requests]": true
+    minimum-expected-value:
+      "[oms]": 1ms
+      "[http.server.requests]": 1ms
+    maximum-expected-value:
+      "[oms]": 30s
+      "[http.server.requests]": 5s

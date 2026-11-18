@@ -1,0 +1,59 @@
+spring:
+  application.name: nocook
+  threads.virtual.enabled: true
+  datasource:
+    url: ${NOCOOK_DB_URL:jdbc:postgresql://toxiproxy:15432/nocook}
+    username: ${NOCOOK_DB_USER:nocook_app}
+    password: ${NOCOOK_DB_PASSWORD:nocook}
+    hikari: { maximum-pool-size: 20, connection-timeout: 2000 }
+  flyway: { schemas: nocook, default-schema: nocook, locations: "classpath:db/migration/nocook" }
+  rabbitmq:
+    host: ${RABBIT_HOST:rabbitmq}
+    port: ${RABBIT_PORT:5672}
+    username: nocook
+    password: nocook
+    listener.simple: { acknowledge-mode: auto, prefetch: 50, concurrency: 4, max-concurrency: 8,
+                       default-requeue-rejected: true, observation-enabled: true }
+    template.observation-enabled: true
+
+nocook:
+  replica-id: ${REPLICA_ID:local}
+  timing: { l1: 30s, ivr: 75s, max-age: 10m, defer-by: 2s }
+  deadlines: { tick: 250ms, batch: 50, lease: 10s }
+  outbox: { tick: 50ms, batch: 100, lease: 10s }
+  oms: { base-url: "${OMS_BASE_URL:http://toxiproxy:18090}", connect-timeout: 300ms, read-timeout: 800ms }
+  mqtt: { host: "${MQTT_HOST:mosquitto}", port: 1883 }
+  telephony: { secret: "${MOCK_TELEPHONY_SECRET:dev-secret}", self-base-url: "http://localhost:8080",
+               auto-outcome-outlet-prefix: outlet-load- }
+  chaos: { toxiproxy-url: "${TOXIPROXY_URL:http://toxiproxy:8474}", grafana-url: "${GRAFANA_URL:http://lgtm:3000}",
+           grafana-user: admin, grafana-password: admin, internal-token: "${INTERNAL_TOKEN:dev-internal}" }
+  results-dir: /results
+
+management:
+  endpoints.web.exposure.include: health,info,metrics
+  # common tag replica=<REPLICA_ID> on every meter (OBSERVABILITY.md section 1)
+  metrics.tags.replica: ${REPLICA_ID:local}
+  otlp.metrics.export: { url: "${OTLP_HTTP:http://lgtm:4318}/v1/metrics", step: 5s, base-time-unit: seconds }
+  opentelemetry:
+    tracing.export.otlp.endpoint: ${OTLP_HTTP:http://lgtm:4318}/v1/traces
+    logging.export.otlp.endpoint: ${OTLP_HTTP:http://lgtm:4318}/v1/logs
+  tracing.sampling.probability: ${TRACING_SAMPLE:1.0}
+  metrics.distribution:
+    # Map keys containing dots MUST use bracket notation in YAML, or Spring splits them into nested keys.
+    percentiles-histogram:
+      "[nocook]": true
+      "[http.server.requests]": true
+    slo:
+      "[nocook.case.open]": 300ms,2s,3s
+      "[nocook.card.delivery]": 300ms,2s,3s
+      "[nocook.card.render]": 300ms,2s,3s
+      "[nocook.ack.fanout]": 300ms,2s,3s
+      "[nocook.deadline.lateness]": 300ms,2s,3s
+      "[nocook.consume.lag]": 300ms,2s,3s
+      "[http.server.requests]": 100ms,300ms,1s
+    minimum-expected-value:
+      "[nocook]": 1ms
+      "[http.server.requests]": 1ms
+    maximum-expected-value:
+      "[nocook]": 30s
+      "[http.server.requests]": 5s
