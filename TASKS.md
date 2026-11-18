@@ -184,7 +184,7 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
 - **Tests (B):** `AckApiIT` (all rows of API.md §1.1 table); Q's R13 must pass.
 - **Done when:**
   ```bash
-  ./mvnw -q -pl nocook-service -am verify -Dit.test='AckApiIT,AckIdempotencyIT'
+  ./mvnw -q -pl nocook-service -am verify -Dit.test='AckApiIT,AckKeyReplayIT'
   CASE=$(curl -s localhost:8080/api/outlets/outlet-demo/open-cases | jq -r '.[0].caseId')
   curl -s -XPOST localhost:8080/api/cases/$CASE/ack -H 'content-type: application/json' -H 'X-Outlet-Id: outlet-demo' -H 'X-Device-Id: cli' -d '{"choice":"STOPPED","idempotencyKey":"k1"}' | jq .state   # "ACKNOWLEDGED"
   ```
@@ -228,7 +228,8 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
 - **Done when:** manual: full order lifecycle from buttons; illegal buttons disabled; "Customer cancels" produces a card on `/tablet`.
 
 ### Q-02 · Test harness + race/invariant ITs (R1–R13)
-- [ ] **Owner** Q · **Est** 120 min (spread over H1–4) · **Depends** Q-01, B-02 (each R-test also depends on the B task it exercises)
+- [x] **Owner** Q · **Est** 120 min (spread over H1–4) · **Depends** Q-01, B-02 (each R-test also depends on the B task it exercises)
+  - Notes: R1-R13 all PASS (+MqttPublishIT); 64 service ITs in 22 classes, 0 failures; no main-code bugs found. tools/export-tests.mjs added (part of Q-07). Single-IT runs need -Dsurefire.failIfNoSpecifiedTests=false -Dfailsafe.failIfNoSpecifiedTests=false.
 - **Spec:** TESTING.md §2, §4
 - **Files:** `nocook-service/src/test/java/com/nocook/service/it/**` (AbstractIT, MutableClock, TestClockConfig, FakeOms, RecordingCardPublisher, R1–R13), `nocook-service/src/test/resources/**`
 - **Build:** harness first (30 min) so B can use it; then write all R-tests early (they fail until B lands the feature), enable as features land.
@@ -257,11 +258,12 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
 - **Files:** `tools/smoke.mjs`, Makefile `smoke`
 - **Done when:** `make smoke` prints PASS with step timings.
 
-### ☐ Gate G1 — "one order end-to-end" (target: end of H4)
-- [ ] `make smoke` PASS (cancel → card < 2 s → takeover at 30 ± 3 s → call at 75 ± 3 s → DTMF 1 → closed on all devices → timeline complete)
-- [ ] Manual: ACK from `tab-1` closes the card on `tab-2`
-- [ ] `cd backend && ./mvnw -q verify` → R1–R13 green
-- [ ] `cd frontend && npm run test -- --run` green
+### ☑ Gate G1 — "one order end-to-end" (target: end of H4)
+- [x] `make smoke` PASS (cancel → card < 2 s → takeover at 30 ± 3 s → call at 75 ± 3 s → DTMF 1 → closed on all devices → timeline complete)
+- [x] Manual: ACK from `tab-1` closes the card on `tab-2`
+- [x] `cd backend && ./mvnw -q verify` → R1–R13 green
+- [x] `cd frontend && npm run test -- --run` green
+  - G1 passed 2026-11-19: make smoke PASS 76.1 s (case-open 138 ms, OPEN card 18 ms, takeover 30116 ms, call 75257 ms, IVR close 75645 ms); backend verify 132 tests 0 failures incl. R1-R13; frontend 27 tests; two-tab ACK + call flow verified in browser (F-02).
 
 ---
 
@@ -307,7 +309,8 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
   ```
 
 ### Q-06 · k6 profiles + tablet swarm
-- [ ] **Owner** Q · **Est** 60 min · **Depends** G1
+- [x] **Owner** Q · **Est** 60 min · **Depends** G1
+  - Notes: P1 dry: 0 dropped, 0 http failures; swarm ACKs (acks/s>0), k6_iterations_total in Prometheus. Use -e DURATION (not --duration) and mkdir results/<run> before k6; k6_dropped_iterations_total only exists after a drop.
 - **Spec:** LOAD_AND_CHAOS.md §2, §3
 - **Files:** `load/profiles.js`, `tools/tablet-swarm.mjs`
 - **Done when:**
