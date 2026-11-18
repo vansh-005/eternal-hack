@@ -56,4 +56,55 @@ public class CaseEventRepository {
             insertSystem(caseId, fact, serverAt, traceId);
         }
     }
+
+    /** Event whose kind is not a domain FactKind (e.g. DTMF_IGNORED). */
+    public void insertRawKind(
+            UUID caseId, String kind, Instant serverAt, String channel, @Nullable String deviceId,
+            java.util.Map<String, String> metadata, @Nullable String traceId) {
+        jdbc.sql("""
+                        insert into nocook.case_events (case_id, kind, server_at, channel, device_id, metadata, trace_id)
+                        values (:caseId, :kind, :serverAt, :channel, :deviceId, cast(:metadata as jsonb), :traceId)""")
+                .param("caseId", caseId)
+                .param("kind", kind)
+                .param("serverAt", CaseRepository.utc(serverAt))
+                .param("channel", channel)
+                .param("deviceId", deviceId)
+                .param("metadata", jsonMapper.writeValueAsString(metadata))
+                .param("traceId", traceId)
+                .update();
+    }
+
+    /**
+     * Records a receipt fact unless one with the same (case, device, kind, messageId) exists. Callers hold an advisory
+     * lock on that key, so check-then-insert is race free.
+     */
+    public boolean insertReceiptIfAbsent(
+            UUID caseId, Fact fact, String deviceId, String messageId, Instant serverAt,
+            @Nullable Instant sourceAt, @Nullable String traceId) {
+        Integer existing = jdbc.sql("""
+                        select count(*) from nocook.case_events
+                        where case_id = :caseId and kind = :kind and device_id = :deviceId
+                          and metadata ->> 'messageId' = :messageId""")
+                .param("caseId", caseId)
+                .param("kind", fact.kind().name())
+                .param("deviceId", deviceId)
+                .param("messageId", messageId)
+                .query(Integer.class)
+                .single();
+        if (existing > 0) {
+            return false;
+        }
+        insert(caseId, fact, serverAt, "TABLET", deviceId, sourceAt, traceId);
+        return true;
+    }
+
+    /** Receipt facts of this kind already recorded for (case, device), across messageIds. */
+    public int countForDevice(UUID caseId, String kind, String deviceId) {
+        return jdbc.sql("select count(*) from nocook.case_events where case_id = :c and kind = :k and device_id = :d")
+                .param("c", caseId)
+                .param("k", kind)
+                .param("d", deviceId)
+                .query(Integer.class)
+                .single();
+    }
 }

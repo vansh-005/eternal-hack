@@ -62,6 +62,48 @@ public class DeadlineRepository {
                 .list();
     }
 
+    /** The worker finished this claimed deadline. Only a row still LEASED is touched. */
+    public void markDone(UUID id, Instant now) {
+        jdbc.sql("""
+                        update nocook.deadlines
+                        set status = 'DONE', done_at = :now, lease_owner = null, lease_until = null
+                        where id = :id and status = 'LEASED'""")
+                .param("now", CaseRepository.utc(now))
+                .param("id", id)
+                .update();
+    }
+
+    /** DOMAIN.md section 5 RescheduleDeadline. */
+    public void reschedule(UUID caseId, DeadlineKind kind, Instant dueAt) {
+        jdbc.sql("""
+                        update nocook.deadlines
+                        set status = 'PENDING', due_at = :dueAt, lease_owner = null, lease_until = null
+                        where case_id = :caseId and kind = :kind""")
+                .param("dueAt", CaseRepository.utc(dueAt))
+                .param("caseId", caseId)
+                .param("kind", kind.name())
+                .update();
+    }
+
+    /** DOMAIN.md section 5 CancelPendingDeadlines (the deadline being processed is already DONE). */
+    public int cancelOpenForCase(UUID caseId) {
+        return jdbc.sql("""
+                        update nocook.deadlines set status = 'CANCELLED', lease_owner = null, lease_until = null
+                        where case_id = :caseId and status in ('PENDING','LEASED')""")
+                .param("caseId", caseId)
+                .update();
+    }
+
+    /** D9: the L1 deadline may still be PENDING when IVR fires (L1 was deferred); retire it. */
+    public int cancelPendingOfKind(UUID caseId, DeadlineKind kind) {
+        return jdbc.sql("""
+                        update nocook.deadlines set status = 'CANCELLED', lease_owner = null, lease_until = null
+                        where case_id = :caseId and kind = :kind and status = 'PENDING'""")
+                .param("caseId", caseId)
+                .param("kind", kind.name())
+                .update();
+    }
+
     /** Return expired leases to PENDING, reporting the previous owner for the LEASE_TAKEOVER fact. */
     public List<ReapedLease> reapExpiredLeases(Instant now) {
         return jdbc.sql("""

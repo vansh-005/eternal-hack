@@ -40,7 +40,8 @@ public class CaseRepository {
             AssuranceCase assuranceCase,
             String orderRef,
             @Nullable AckChoice ackChoice,
-            @Nullable AckChannel ackChannel) {}
+            @Nullable AckChannel ackChannel,
+            @Nullable Instant ackedAt) {}
 
     /** Ack columns written by the ACK path (B-05). */
     public record AckUpdate(AckChoice choice, AckChannel channel, String actor, String idempotencyKey, Instant ackedAt) {}
@@ -184,6 +185,7 @@ public class CaseRepository {
                 assuranceCase,
                 rs.getString("order_ref"),
                 ackChoice == null ? null : AckChoice.valueOf(ackChoice),
-                ackChannel == null ? null : AckChannel.valueOf(ackChannel));
+                ackChannel == null ? null : AckChannel.valueOf(ackChannel),
+                instant(rs, "acked_at"));
     }
 }

@@ -342,7 +342,8 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
 ## 4. Phase H7–9 — Proof runs
 
 ### Q-08 · 10,000-scenario simulation
-- [ ] **Owner** Q · **Est** 75 min · **Depends** Q-01
+- [x] **Owner** Q · **Est** 75 min · **Depends** Q-01
+  - Notes: 9 tests green; results/sim-20261119-0321 (n=10000, seed 2026). SIMULATED: time-to-stop p95 nocook 43.55 s vs baseline 241.2 s; Rs 3,521 avoided per 1,000 cancellations (late-notice 10%; 1,846-6,887 at 5-20%).
 - **Spec:** SIMULATION.md (all)
 - **Files:** `backend/nocook-sim/**`, `sim/assumptions-v1.json`
 - **Done when:**

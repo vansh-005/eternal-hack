@@ -1,0 +1,31 @@
+{
+  "version": "v1",
+  "stageAtCancel": { "NOT_STARTED": 0.35, "PREP": 0.35, "OVEN": 0.20, "READY": 0.10 },
+  "initiator": { "CUSTOMER": 0.95, "RESTAURANT": 0.05 },
+  "orderValueRupees": { "min": 150, "max": 900 },
+  "kitchenSecondsToNextStage": {
+    "notStartedToPrep": { "min": 30, "max": 180 },
+    "prepToOven": { "min": 120, "max": 300 },
+    "ovenToReady": { "min": 300, "max": 600 }
+  },
+  "stageCostRupees": { "NOT_STARTED": 0, "PREP": 45, "OVEN": 110, "READY": 150 },
+  "lateNoticeRate": 0.10,
+  "lateNoticeSensitivity": [0.05, 0.10, 0.20],
+  "lateDiscoveryThresholdSeconds": 120,
+  "baselineDiscovery": {
+    "notLate": { "medianSeconds": 20, "sigma": 0.6 },
+    "late": { "medianSeconds": 240, "sigma": 0.5 }
+  },
+  "cardAckBeforeL1": { "probability": 0.70, "medianSeconds": 12, "sigma": 0.5, "truncatedBelowSeconds": 30 },
+  "ackAfterTakeover": { "probability": 0.60, "medianSeconds": 10, "sigma": 0.5, "truncatedBelowSeconds": 45 },
+  "ivr": {
+    "answeredProbabilityOfRemaining": 0.80,
+    "dtmfMedianSecondsAfterCallStart": 15,
+    "dtmfSigma": 0.4,
+    "outcomeIfNotAnswered": { "NO_ANSWER": 0.60, "BUSY": 0.25, "FAILED": 0.15 }
+  },
+  "stopDelayAfterAckSeconds": { "min": 0, "max": 10 },
+  "deviceOffline": { "probability": 0.05, "reconnectSeconds": { "min": 20, "max": 120 } },
+  "openLatencySeconds": 0.2,
+  "ivrCostPerCallPaise": 150
+}

@@ -70,7 +70,7 @@ demo-reset:
 	@echo "not yet implemented: Q-07"
 
 sim:
-	@echo "not yet implemented: Q-08"
+	cd backend && ./mvnw -q -pl nocook-sim -am package -DskipTests && java -jar nocook-sim/target/nocook-sim.jar --seed 2026 --n 10000 --out ../results/sim-$$(date +%Y%m%d-%H%M)
 
 screenshots:
 	@echo "not yet implemented: Q-07"

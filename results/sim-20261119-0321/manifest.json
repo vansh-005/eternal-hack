@@ -1,0 +1,11 @@
+{
+  "kind" : "SIMULATED",
+  "runId" : "sim-20261119-0321",
+  "seed" : 2026,
+  "n" : 10000,
+  "assumptionsFile" : "assumptions-v1.json",
+  "assumptionsSha256" : "1d7d66a68aa56866189db066abb307f9f9df4415400666bc30abbf004b5ab63f",
+  "commit" : "d667f2b",
+  "startedAt" : "2026-11-18T21:51:24.175199200Z",
+  "wallMs" : 624
+}
