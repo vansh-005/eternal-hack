@@ -98,6 +98,11 @@ public class CaseEventRepository {
         return true;
     }
 
+    /** Serialises concurrent identical receipts for the rest of the transaction. */
+    public void lockReceiptKey(String key) {
+        jdbc.sql("select pg_advisory_xact_lock(hashtext(:key))").param("key", key).query().singleRow();
+    }
+
     /** Receipt facts of this kind already recorded for (case, device), across messageIds. */
     public int countForDevice(UUID caseId, String kind, String deviceId) {
         return jdbc.sql("select count(*) from nocook.case_events where case_id = :c and kind = :k and device_id = :d")

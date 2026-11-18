@@ -148,7 +148,8 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
   ```
 
 ### B-03 · Outbox dispatcher, MQTT publish, receipts
-- [ ] **Owner** B · **Est** 45 min · **Depends** B-02
+- [x] **Owner** B · **Est** 45 min · **Depends** B-02
+  - Notes: OutboxDispatchIT 5 green; live OPEN card on MQTT 111 ms after cancel; receipts record client-tagged timers.
 - **Spec:** BACKEND.md §3.3; API.md §1.2, §4; DOMAIN.md §1 (facts)
 - **Files:** `…/scheduling/OutboxDispatcher.java`, `…/notifications/**`, `…/application/ReceiptService.java`, `…/api/ReceiptController.java`, `…/config/MqttConfig.java`
 - **Build:** claim/lease/dispatch per BACKEND.md §3.3 (MQTT types only here; PLACE_CALL in B-06); `CardPublisher` builds `CardMessage` (API.md §4) and publishes QoS 1, waits for PUBACK; fact `CARD_DISPATCHED`; `ReceiptService` records first receipt per (case, device, kind, messageId) and records `nocook.card.delivery` / `.render` / `.ack.fanout` timers (meters may be stubs until B-07, names final).
@@ -161,7 +162,8 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
   ```
 
 ### B-04 · Deadline worker, escalation, lease reaper
-- [ ] **Owner** B · **Est** 60 min · **Depends** B-02
+- [x] **Owner** B · **Est** 60 min · **Depends** B-02
+  - Notes: DeadlineWorkerIT 9 + EscalationServiceIT 4 green; live L1 at 30.2 s; listener backoff (70 s budget) keeps OMS-down cancellations out of the DLQ. Q-02 R2/R4/R5/R7/R8 still to run.
 - **Spec:** DOMAIN.md §3.1, §5; ARCHITECTURE.md §3; BACKEND.md §3.2; DATA_MODEL.md §3
 - **Files:** `…/scheduling/{DeadlineWorker,LeaseReaper}.java`, `…/application/EscalationService.java`, `EffectApplier` (Reschedule, CancelPending, SendCard TAKEOVER/CLOSE)
 - **Build:** worker `tick()` (public, for tests) + `@Scheduled` wrapper guarded by `nocook.scheduling.enabled`; OMS read outside tx; per-deadline tx; DEFERRED → reschedule; reaper for deadlines and outbox with `LEASE_TAKEOVER` facts.
@@ -174,7 +176,8 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
   ```
 
 ### B-05 · ACK API, open-cases, timeline
-- [ ] **Owner** B · **Est** 45 min · **Depends** B-02
+- [x] **Owner** B · **Est** 45 min · **Depends** B-02
+  - Notes: AckApiIT 11 + AckIdempotencyIT 3 green; open-cases/timeline/ack live (ack 66 ms).
 - **Spec:** API.md §1.1, §1.3, §1.4; DOMAIN.md §3.2; BACKEND.md §3.4
 - **Files:** `…/application/AckService.java`, `…/api/{AckController,OutletController,TimelineController,ApiExceptionHandler}.java`
 - **Build:** outlet header check; idempotency; outcome → HTTP mapping; `derived` ms in timeline.
@@ -187,7 +190,8 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
   ```
 
 ### B-06 · Mock IVR: reservation, gateway, provider, signed webhooks
-- [ ] **Owner** B · **Est** 60 min · **Depends** B-03, B-04, B-05
+- [x] **Owner** B · **Est** 60 min · **Depends** B-03, B-04, B-05
+  - Notes: TelephonyFlowIT 8 green; live IVR call at 75.2 s, DTMF 1 closes via IVR; make smoke PASS 76.3 s. AckVsIvrRaceIT/WebhookSecurityIT pending in Q-02.
 - **Spec:** ARCHITECTURE.md §4; API.md §1.7, §1.8, §4 (`CallMessage`); DOMAIN.md §5 (`ReserveIvr`, `EndCall`); LOAD_AND_CHAOS.md §4 (auto-outcomes)
 - **Files:** `…/telephony/**`, `…/application/TelephonyService.java`, `…/api/TelephonyWebhookController.java`, `CallAttemptRepository`, `WebhookEventRepository`, dispatcher `PLACE_CALL` branch
 - **Build:** `ReserveIvr` → call_attempts insert (unique) + outbox `PLACE_CALL`; dispatcher re-checks case open → `placeCall` → `INCOMING_CALL`; provider controller emits HMAC-signed webhooks async; webhook dedupe + status machine (terminal never regresses) + DTMF → `AckService`; `EndCall` → `CALL_ENDED`; auto-outcome scripts for `outlet-load-*`.
@@ -244,7 +248,8 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
   ```
 
 ### Q-04 · System smoke script
-- [ ] **Owner** Q · **Est** 40 min · **Depends** B-06 (can be written earlier against the spec)
+- [x] **Owner** Q · **Est** 40 min · **Depends** B-06 (can be written earlier against the spec)
+  - Notes: make smoke PASS in 76.3 s: case-open 156 ms, OPEN card 111 ms, TAKEOVER 30213 ms, call 75192 ms, CLOSE 75615 ms.
 - **Spec:** TESTING.md §5
 - **Files:** `tools/smoke.mjs`, Makefile `smoke`
 - **Done when:** `make smoke` prints PASS with step timings.
