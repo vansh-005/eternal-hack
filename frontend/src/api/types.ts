@@ -17,6 +17,8 @@ export type AckChannel = 'TABLET' | 'IVR' | 'SYSTEM'
 export type CaseState = string // state names are owned by docs/DOMAIN.md
 export type OrderStatus = string // status names are owned by docs/DATA_MODEL.md
 export type OrderStage = 'PREP' | 'OVEN'
+// Stage as stored by the OMS (DATA_MODEL.md §1); the stage request only sends PREP | OVEN.
+export type OrderSnapshotStage = 'NOT_STARTED' | 'PREP' | 'OVEN' | 'READY'
 
 // ---- 1.1 ACK ------------------------------------------------------------
 
@@ -294,12 +296,13 @@ export interface OrderSnapshot {
   outletId: string
   version: number
   status: OrderStatus
-  stage: OrderStage | null
+  stage: OrderSnapshotStage | null
   valuePaise: number
   orderRef: string
   acceptedAt: IsoTimestamp | null
   readyAt: IsoTimestamp | null
   pickedUpAt: IsoTimestamp | null
+  deliveredAt?: IsoTimestamp | null
   cancelledAt: IsoTimestamp | null
   cancelInitiator: string | null
   items: OrderItem[]

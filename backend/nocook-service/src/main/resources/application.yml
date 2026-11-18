@@ -18,6 +18,7 @@ spring:
 
 nocook:
   replica-id: ${REPLICA_ID:local}
+  scheduling.enabled: true
   timing: { l1: 30s, ivr: 75s, max-age: 10m, defer-by: 2s }
   deadlines: { tick: 250ms, batch: 50, lease: 10s }
   outbox: { tick: 50ms, batch: 100, lease: 10s }

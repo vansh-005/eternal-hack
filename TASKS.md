@@ -129,7 +129,8 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
 ## 2. Phase H1–4 — Core loop
 
 ### B-02 · Ingestion → fresh read → case opening
-- [ ] **Owner** B · **Est** 60 min · **Depends** G0, Q-01
+- [x] **Owner** B · **Est** 60 min · **Depends** G0, Q-01
+  - Notes: CaseOpeningIT 6 tests green (needs -Dfailsafe.failIfNoSpecifiedTests=false with -am); live cancel -> AWAITING_ACK with 3 deadlines + MQTT_CARD outbox row.
 - **Spec:** DOMAIN.md §2, §5; BACKEND.md §3, §3.1; DATA_MODEL.md §2–3; API.md §2 (`GET` snapshot), §3
 - **Files:** `nocook-service/src/main/java/com/nocook/service/{ingestion,oms,application,persistence,config}/**`
 - **Build:**
@@ -230,7 +231,8 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
   ```
 
 ### Q-03 · Firehose, replay, race endpoints (mock-oms)
-- [ ] **Owner** Q · **Est** 45 min · **Depends** B-01
+- [x] **Owner** Q · **Est** 45 min · **Depends** B-01
+  - Notes: 14,004 events/s achieved at 14k target (published 279k in 20 s); nocook.cancellations unchanged; mock-oms ~0.8 core, rabbitmq 188 MiB. 6 mock-oms ITs green.
 - **Spec:** API.md §2 (firehose, test endpoints); BACKEND.md §4 (firehose pacing); OBSERVABILITY.md §3 (`oms.firehose.achieved`, `oms.events.published`)
 - **Files:** `backend/mock-oms/src/main/java/com/nocook/oms/{firehose,testsupport}/**`, `FirehoseRabbitConfig`
 - **Done when:**

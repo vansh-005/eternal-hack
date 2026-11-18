@@ -55,7 +55,7 @@ test-domain:
 	cd backend && ./mvnw -q -pl nocook-domain test
 
 smoke:
-	@echo "not yet implemented: Q-04"
+	node tools/smoke.mjs
 
 metric-names:
 	@echo "not yet implemented: Q-05"
