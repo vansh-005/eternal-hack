@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { useOutletOrders } from '../../api/queries'
 import { StatusDot } from '../../components/StatusDot'
 import { formatClock, useNow } from '../../lib/time'
 import { playBeep, useAudioUnlocked } from '../../lib/sound'
 import { useMqtt } from '../../mqtt/useMqtt'
+import { CallScreen } from './CallScreen'
+import { callReducer, initialCallState } from './callState'
 import { CancelCard } from './CancelCard'
 import { OrderQueue } from './OrderQueue'
 import { TakeoverOverlay } from './TakeoverOverlay'
@@ -20,16 +22,28 @@ export default function TabletPage() {
   const audioUnlocked = useAudioUnlocked()
   const clock = useNow(1000)
   const orders = useOutletOrders(outletId)
-  const { cases, closeLocally } = useTabletCases({
+  const [callState, dispatchCall] = useReducer(callReducer, initialCallState)
+  const { cases, closeLocally, closedCaseIds } = useTabletCases({
     outletId,
     deviceId,
     mqtt,
     onAlert: () => {
       playBeep()
     },
-    // F-02 plugs the call screen in here (CallMessage on the calls topic).
-    onCallMessage: undefined,
+    onCallMessage: (message) => dispatchCall({ type: 'MESSAGE', message }),
+    onSnapshot: (openCases) => dispatchCall({ type: 'SNAPSHOT', openCases }),
   })
+  const onAnswered = useCallback((providerCallId: string) => dispatchCall({ type: 'ANSWERED', providerCallId }), [])
+  const activeCall = callState.call
+  const callCaseClosed = activeCall !== null && closedCaseIds.includes(activeCall.caseId)
+  useEffect(() => {
+    if (activeCall !== null && callCaseClosed) {
+      dispatchCall({
+        type: 'DISMISS',
+        providerCallId: activeCall.providerCallId,
+      })
+    }
+  }, [activeCall, callCaseClosed])
 
   const [offlineUntil, setOfflineUntil] = useState<number | null>(null)
   const offlineTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -115,6 +129,10 @@ export default function TabletPage() {
           onClosed={closeLocally}
           queueStrip={<OrderQueue orders={activeOrders} isError={orders.isError} strip />}
         />
+      )}
+
+      {activeCall !== null && !callCaseClosed && (
+        <CallScreen key={activeCall.providerCallId} call={activeCall} onAnswered={onAnswered} />
       )}
     </main>
   )

@@ -1,0 +1,116 @@
+[
+  {
+    "test": "MQTT",
+    "received": 2,
+    "result": "PASS",
+    "class": "com.nocook.service.it.MqttPublishIT"
+  },
+  {
+    "test": "R1",
+    "copies": 20,
+    "duplicateCounter": 19,
+    "duplicateFacts": 19,
+    "cases": 1,
+    "result": "PASS",
+    "class": "com.nocook.service.it.DuplicateStormIT"
+  },
+  {
+    "test": "R2",
+    "deadlines": 200,
+    "l1Facts": 200,
+    "takeoverCards": 200,
+    "done": 200,
+    "result": "PASS",
+    "class": "com.nocook.service.it.TwoWorkersOneTimerIT"
+  },
+  {
+    "test": "R3",
+    "dialedAfterAck": 0,
+    "callAttempts": 500,
+    "acked": 500,
+    "cases": 1000,
+    "ackedThenReserved": 0,
+    "maxIvrPerCase": 1,
+    "result": "PASS",
+    "class": "com.nocook.service.it.AckVsIvrRaceIT"
+  },
+  {
+    "test": "R4",
+    "takeoverFacts": 1,
+    "takeoverCounter": 1,
+    "state": "ESCALATED_L1",
+    "result": "PASS",
+    "class": "com.nocook.service.it.LeaseTakeoverIT"
+  },
+  {
+    "test": "R5",
+    "deferredToMs": 2000,
+    "finalState": "ESCALATED_L1",
+    "result": "PASS",
+    "class": "com.nocook.service.it.OmsUnavailableDefersIT"
+  },
+  {
+    "test": "R6",
+    "reason": "READY_OR_PICKED_UP",
+    "deadlines": 0,
+    "outbox": 0,
+    "result": "PASS",
+    "class": "com.nocook.service.it.ReadyBeforeCancelIT"
+  },
+  {
+    "test": "R7",
+    "cancelledDeadlines": 2,
+    "closeCards": 1,
+    "state": "SUPERSEDED",
+    "result": "PASS",
+    "class": "com.nocook.service.it.SupersededAtEscalationIT"
+  },
+  {
+    "test": "R8",
+    "error": "CASE_CLOSED",
+    "lateAckStatus": 409,
+    "state": "EXPIRED",
+    "result": "PASS",
+    "class": "com.nocook.service.it.ExpiryIT"
+  },
+  {
+    "test": "R9",
+    "status": "SENT",
+    "published": 1,
+    "result": "PASS",
+    "class": "com.nocook.service.it.OutboxCrashAfterCommitIT"
+  },
+  {
+    "test": "R10",
+    "duplicate": true,
+    "ackChannel": "IVR",
+    "missing": 401,
+    "bad": 401,
+    "result": "PASS",
+    "class": "com.nocook.service.it.WebhookSecurityIT"
+  },
+  {
+    "test": "R11",
+    "role": "nocook_app",
+    "readDenied": true,
+    "writeDenied": true,
+    "result": "PASS",
+    "class": "com.nocook.service.it.NocookRoleCannotWriteOmsIT"
+  },
+  {
+    "test": "R12",
+    "deliveries": 2,
+    "cases": 1,
+    "duplicateFacts": 1,
+    "result": "PASS",
+    "class": "com.nocook.service.it.CrashAfterCommitBeforeAckIT"
+  },
+  {
+    "test": "R13",
+    "other": 409,
+    "replay": 200,
+    "first": 200,
+    "result": "PASS",
+    "class": "com.nocook.service.it.AckIdempotencyIT"
+  }
+]

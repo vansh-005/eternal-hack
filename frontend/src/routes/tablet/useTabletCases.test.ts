@@ -61,10 +61,19 @@ function openCase(overrides: Partial<OpenCase> = {}): OpenCase {
 
 describe('tabletCasesReducer version ordering', () => {
   it('applies a message with a higher or equal caseVersion', () => {
-    let state = tabletCasesReducer(initialCasesState, { type: 'CARD', message: card(), seq: 1 })
+    let state = tabletCasesReducer(initialCasesState, {
+      type: 'CARD',
+      message: card(),
+      seq: 1,
+    })
     state = tabletCasesReducer(state, {
       type: 'CARD',
-      message: card({ kind: 'TAKEOVER', state: 'ESCALATED_L1', caseVersion: 2, messageId: 'card:c1:TAKEOVER:2' }),
+      message: card({
+        kind: 'TAKEOVER',
+        state: 'ESCALATED_L1',
+        caseVersion: 2,
+        messageId: 'card:c1:TAKEOVER:2',
+      }),
       seq: 2,
     })
     expect(at(state).caseVersion).toBe(2)
@@ -74,10 +83,18 @@ describe('tabletCasesReducer version ordering', () => {
   it('ignores a message with a lower caseVersion (out-of-order delivery)', () => {
     let state = tabletCasesReducer(initialCasesState, {
       type: 'CARD',
-      message: card({ kind: 'TAKEOVER', state: 'ESCALATED_L1', caseVersion: 2 }),
+      message: card({
+        kind: 'TAKEOVER',
+        state: 'ESCALATED_L1',
+        caseVersion: 2,
+      }),
       seq: 1,
     })
-    state = tabletCasesReducer(state, { type: 'CARD', message: card({ caseVersion: 1 }), seq: 2 })
+    state = tabletCasesReducer(state, {
+      type: 'CARD',
+      message: card({ caseVersion: 1 }),
+      seq: 2,
+    })
     expect(at(state).caseVersion).toBe(2)
     expect(at(state).state).toBe('ESCALATED_L1')
   })
@@ -85,7 +102,11 @@ describe('tabletCasesReducer version ordering', () => {
 
 describe('tabletCasesReducer CLOSE', () => {
   it('keeps the card as a closing toast, then REMOVE deletes it', () => {
-    let state = tabletCasesReducer(initialCasesState, { type: 'CARD', message: card(), seq: 1 })
+    let state = tabletCasesReducer(initialCasesState, {
+      type: 'CARD',
+      message: card(),
+      seq: 1,
+    })
     state = tabletCasesReducer(state, {
       type: 'CARD',
       message: card({
@@ -106,14 +127,27 @@ describe('tabletCasesReducer CLOSE', () => {
   })
 
   it('never resurrects a closed case from a late OPEN or snapshot', () => {
-    let state = tabletCasesReducer(initialCasesState, { type: 'CARD', message: card(), seq: 1 })
+    let state = tabletCasesReducer(initialCasesState, {
+      type: 'CARD',
+      message: card(),
+      seq: 1,
+    })
     state = tabletCasesReducer(state, {
       type: 'CARD',
-      message: card({ kind: 'CLOSE', caseVersion: 3, state: 'EXPIRED', closeReason: 'EXPIRED' }),
+      message: card({
+        kind: 'CLOSE',
+        caseVersion: 3,
+        state: 'EXPIRED',
+        closeReason: 'EXPIRED',
+      }),
       seq: 2,
     })
     state = tabletCasesReducer(state, { type: 'REMOVE', caseId: 'c1' })
-    state = tabletCasesReducer(state, { type: 'CARD', message: card({ caseVersion: 1 }), seq: 3 })
+    state = tabletCasesReducer(state, {
+      type: 'CARD',
+      message: card({ caseVersion: 1 }),
+      seq: 3,
+    })
     state = tabletCasesReducer(state, {
       type: 'SNAPSHOT',
       openCases: [openCase({ caseVersion: 2 })],
@@ -129,15 +163,25 @@ describe('tabletCasesReducer CLOSE', () => {
       message: card({ kind: 'CLOSE', caseVersion: 3 }),
       seq: 1,
     })
-    state = tabletCasesReducer(state, { type: 'CARD', message: card(), seq: 2 })
+    state = tabletCasesReducer(state, {
+      type: 'CARD',
+      message: card(),
+      seq: 2,
+    })
     expect(state.cases['c1']).toBeUndefined()
   })
 
   it('formats close reasons', () => {
     expect(closeReasonText(card({ closeReason: 'EXPIRED' }))).toBe('Closed: expired')
-    expect(closeReasonText(card({ ackChannel: 'TABLET', ackChoice: 'STOPPED', closeReason: 'ACKNOWLEDGED' }))).toBe(
-      'Closed: acknowledged on tablet (STOPPED)',
-    )
+    expect(
+      closeReasonText(
+        card({
+          ackChannel: 'TABLET',
+          ackChoice: 'STOPPED',
+          closeReason: 'ACKNOWLEDGED',
+        }),
+      ),
+    ).toBe('Closed: acknowledged on tablet (STOPPED)')
   })
 })
 
@@ -156,24 +200,55 @@ describe('tabletCasesReducer snapshot merge', () => {
   it('does not downgrade a newer card held locally', () => {
     let state = tabletCasesReducer(initialCasesState, {
       type: 'CARD',
-      message: card({ caseVersion: 2, kind: 'TAKEOVER', state: 'ESCALATED_L1' }),
+      message: card({
+        caseVersion: 2,
+        kind: 'TAKEOVER',
+        state: 'ESCALATED_L1',
+      }),
       seq: 1,
     })
-    state = tabletCasesReducer(state, { type: 'SNAPSHOT', openCases: [openCase({ caseVersion: 1 })], sinceSeq: 1, seq: 2 })
+    state = tabletCasesReducer(state, {
+      type: 'SNAPSHOT',
+      openCases: [openCase({ caseVersion: 1 })],
+      sinceSeq: 1,
+      seq: 2,
+    })
     expect(at(state).caseVersion).toBe(2)
   })
 
   it('drops cards absent from the snapshot (closed/expired while offline) and tombstones them', () => {
-    let state = tabletCasesReducer(initialCasesState, { type: 'CARD', message: card(), seq: 1 })
-    state = tabletCasesReducer(state, { type: 'SNAPSHOT', openCases: [], sinceSeq: 1, seq: 2 })
+    let state = tabletCasesReducer(initialCasesState, {
+      type: 'CARD',
+      message: card(),
+      seq: 1,
+    })
+    state = tabletCasesReducer(state, {
+      type: 'SNAPSHOT',
+      openCases: [],
+      sinceSeq: 1,
+      seq: 2,
+    })
     expect(state.cases['c1']).toBeUndefined()
-    state = tabletCasesReducer(state, { type: 'CARD', message: card(), seq: 3 })
+    state = tabletCasesReducer(state, {
+      type: 'CARD',
+      message: card(),
+      seq: 3,
+    })
     expect(state.cases['c1']).toBeUndefined()
   })
 
   it('keeps cards that arrived over MQTT after the snapshot fetch began', () => {
-    let state = tabletCasesReducer(initialCasesState, { type: 'CARD', message: card(), seq: 5 })
-    state = tabletCasesReducer(state, { type: 'SNAPSHOT', openCases: [], sinceSeq: 4, seq: 6 })
+    let state = tabletCasesReducer(initialCasesState, {
+      type: 'CARD',
+      message: card(),
+      seq: 5,
+    })
+    state = tabletCasesReducer(state, {
+      type: 'SNAPSHOT',
+      openCases: [],
+      sinceSeq: 4,
+      seq: 6,
+    })
     expect(state.cases['c1']).toBeDefined()
   })
 })

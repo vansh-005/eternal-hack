@@ -48,7 +48,7 @@ class AckVsIvrRaceIT extends AbstractIT {
             work.add(pool.submit(() -> {
                 startGun.await();
                 ackService.ack(caseId, "outlet-it",
-                        new MerchantAck(AckChoice.STOPPED, AckChannel.TABLET, "tab-1", "k-" + caseId));
+                        new MerchantAck(AckChoice.STOPPED, AckChannel.TABLET, "tab-1", "k-" + caseId), null);
                 return null;
             }));
         }
@@ -85,11 +85,13 @@ class AckVsIvrRaceIT extends AbstractIT {
                 where ca.status <> 'CANCELLED'
                   and pg_xact_commit_timestamp(ca.xmin) > pg_xact_commit_timestamp(ack.xmin)""")
                 .query(Long.class).single();
+        long reservedCalls = count("nocook.call_attempts");
         long acked = jdbc.sql("select count(*) from nocook.cases where state = 'ACKNOWLEDGED'").query(Long.class).single();
-        ItSummary.print("R3", Map.of("cases", CASES, "acked", acked, "maxIvrPerCase", maxAttempts,
+        ItSummary.print("R3", Map.of("cases", CASES, "acked", acked, "maxIvrPerCase", maxAttempts, "callAttempts", reservedCalls,
                 "ackedThenReserved", ackedThenReserved, "dialedAfterAck", dialedAckedFirst),
                 maxAttempts <= 1 && ackedThenReserved == 0 && dialedAckedFirst == 0);
 
+        assertThat(reservedCalls).as("the IVR side of the race really ran").isGreaterThan(0);
         assertThat(maxAttempts).isLessThanOrEqualTo(1);
         assertThat(ackedThenReserved).isZero();
         assertThat(dialedAckedFirst).isZero();

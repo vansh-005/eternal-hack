@@ -42,7 +42,10 @@ export type TabletCasesAction =
   | { type: 'LOCAL_CLOSE'; caseId: string; reason: string }
   | { type: 'REMOVE'; caseId: string }
 
-export const initialCasesState: TabletCasesState = { cases: {}, tombstones: {} }
+export const initialCasesState: TabletCasesState = {
+  cases: {},
+  tombstones: {},
+}
 
 export function isTakeover(entry: TabletCase): boolean {
   return entry.kind === 'TAKEOVER' || entry.state === 'ESCALATED_L1'
@@ -118,19 +121,36 @@ function applyCard(state: TabletCasesState, message: CardMessage, seq: number): 
     if (stored !== undefined && stored.closing !== null) {
       // Locally closed already; remember the CLOSE id for DISMISSED.
       if (stored.closing.messageId === null) {
-        return withEntry(state, { ...stored, closing: { ...stored.closing, messageId: message.messageId } })
+        return withEntry(state, {
+          ...stored,
+          closing: { ...stored.closing, messageId: message.messageId },
+        })
       }
       return state
     }
     if (stored === undefined || tombstoned) {
-      return { ...state, tombstones: { ...state.tombstones, [message.caseId]: true } }
+      return {
+        ...state,
+        tombstones: { ...state.tombstones, [message.caseId]: true },
+      }
     }
     if (message.caseVersion < stored.caseVersion) {
       return state
     }
-    const closing: ClosingInfo = { reason: closeReasonText(message), messageId: message.messageId }
-    const next = withEntry(state, { ...stored, caseVersion: message.caseVersion, seq, closing })
-    return { ...next, tombstones: { ...next.tombstones, [message.caseId]: true } }
+    const closing: ClosingInfo = {
+      reason: closeReasonText(message),
+      messageId: message.messageId,
+    }
+    const next = withEntry(state, {
+      ...stored,
+      caseVersion: message.caseVersion,
+      seq,
+      closing,
+    })
+    return {
+      ...next,
+      tombstones: { ...next.tombstones, [message.caseId]: true },
+    }
   }
 
   if (tombstoned) {
@@ -182,12 +202,18 @@ export function tabletCasesReducer(state: TabletCasesState, action: TabletCasesA
       return applySnapshot(state, action.openCases, action.sinceSeq, action.seq)
     case 'LOCAL_CLOSE': {
       const stored = state.cases[action.caseId]
-      const tombstoned = { ...state.tombstones, [action.caseId]: true as const }
+      const tombstoned = {
+        ...state.tombstones,
+        [action.caseId]: true as const,
+      }
       if (stored === undefined || stored.closing !== null) {
         return { ...state, tombstones: tombstoned }
       }
       const closing: ClosingInfo = { reason: action.reason, messageId: null }
-      return { cases: { ...state.cases, [action.caseId]: { ...stored, closing } }, tombstones: tombstoned }
+      return {
+        cases: { ...state.cases, [action.caseId]: { ...stored, closing } },
+        tombstones: tombstoned,
+      }
     }
     case 'REMOVE':
       return withoutEntry(state, action.caseId, true)
@@ -231,12 +257,16 @@ export interface UseTabletCasesOptions {
   onAlert?: () => void
   /** Hook for the call screen (F-02). Receives every CallMessage on the calls topic. */
   onCallMessage?: (message: CallMessage) => void
+  /** Called with every open-cases snapshot (mount and every reconnect); carries `call` info. */
+  onSnapshot?: (openCases: OpenCase[]) => void
 }
 
 export interface UseTabletCases {
   cases: TabletCase[]
   /** Close a case locally after an ACK 200 / 409. */
   closeLocally: (caseId: string, reason: string) => void
+  /** Case ids closed or closing: a call for one of these must be dismissed. */
+  closedCaseIds: string[]
 }
 
 function sortCases(cases: Record<string, TabletCase>): TabletCase[] {
@@ -244,7 +274,7 @@ function sortCases(cases: Record<string, TabletCase>): TabletCase[] {
 }
 
 export function useTabletCases(options: UseTabletCasesOptions): UseTabletCases {
-  const { outletId, deviceId, mqtt, onAlert, onCallMessage } = options
+  const { outletId, deviceId, mqtt, onAlert, onCallMessage, onSnapshot } = options
   const { subscribe, connectCount } = mqtt
   const [state, dispatch] = useReducer(tabletCasesReducer, initialCasesState)
 
@@ -254,11 +284,13 @@ export function useTabletCases(options: UseTabletCasesOptions): UseTabletCases {
   const removalTimers = useRef(new Map<string, ReturnType<typeof setTimeout>>())
   const onAlertRef = useRef(onAlert)
   const onCallRef = useRef(onCallMessage)
+  const onSnapshotRef = useRef(onSnapshot)
 
   useEffect(() => {
     stateRef.current = state
     onAlertRef.current = onAlert
     onCallRef.current = onCallMessage
+    onSnapshotRef.current = onSnapshot
   })
 
   // Live cards.
@@ -275,7 +307,10 @@ export function useTabletCases(options: UseTabletCasesOptions): UseTabletCases {
       seqRef.current += 1
       dispatch({ type: 'CARD', message, seq: seqRef.current })
       if (message.kind !== 'CLOSE') {
-        pendingRendered.current.set(message.messageId, { caseId: message.caseId, messageId: message.messageId })
+        pendingRendered.current.set(message.messageId, {
+          caseId: message.caseId,
+          messageId: message.messageId,
+        })
         if ((message.kind === 'OPEN' && fresh) || message.kind === 'TAKEOVER') {
           onAlertRef.current?.()
         }
@@ -283,7 +318,7 @@ export function useTabletCases(options: UseTabletCasesOptions): UseTabletCases {
     })
   }, [subscribe, outletId, deviceId])
 
-  // Call messages: hook only (F-02 renders the call screen).
+  // Call messages: forwarded to the call screen state (CallScreen).
   useEffect(() => {
     return subscribe(callsTopic(outletId), (_topic, payload) => {
       const parsed = parseJson(payload)
@@ -303,7 +338,13 @@ export function useTabletCases(options: UseTabletCasesOptions): UseTabletCases {
           const openCases = await fetchOpenCases(outletId, deviceId)
           if (!cancelled) {
             seqRef.current += 1
-            dispatch({ type: 'SNAPSHOT', openCases, sinceSeq, seq: seqRef.current })
+            dispatch({
+              type: 'SNAPSHOT',
+              openCases,
+              sinceSeq,
+              seq: seqRef.current,
+            })
+            onSnapshotRef.current?.(openCases)
           }
           return
         } catch {
@@ -354,5 +395,9 @@ export function useTabletCases(options: UseTabletCasesOptions): UseTabletCases {
     dispatch({ type: 'LOCAL_CLOSE', caseId, reason })
   }, [])
 
-  return { cases: sortCases(state.cases), closeLocally }
+  return {
+    cases: sortCases(state.cases),
+    closeLocally,
+    closedCaseIds: Object.keys(state.tombstones),
+  }
 }

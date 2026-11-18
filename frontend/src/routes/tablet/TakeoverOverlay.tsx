@@ -28,7 +28,11 @@ export function TakeoverOverlay({ entry, more, outletId, deviceId, onClosed, que
         <p className="text-lg">
           Call to kitchen in <Countdown to={entry.ivrAt} className="text-3xl font-bold" />
         </p>
-        {more > 0 && <p className="text-sm">+{more} more cancelled order{more === 1 ? '' : 's'} waiting</p>}
+        {more > 0 && (
+          <p className="text-sm">
+            +{more} more cancelled order{more === 1 ? '' : 's'} waiting
+          </p>
+        )}
         <div className="w-full max-w-3xl">
           <AckButtons entry={entry} outletId={outletId} deviceId={deviceId} onClosed={onClosed} large />
         </div>

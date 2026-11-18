@@ -203,7 +203,8 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
   ```
 
 ### F-01 · Tablet: queue, cards, ACK, receipts, takeover, reconnect
-- [ ] **Owner** F · **Est** 90 min · **Depends** F-00 (API shapes from API.md; works against the live stack once B-03/B-05 land)
+- [x] **Owner** F · **Est** 90 min · **Depends** F-00 (API shapes from API.md; works against the live stack once B-03/B-05 land)
+  - Notes: 27 vitest green; verified in browser: card on two tabs, ACK on tab-1 closes tab-2, takeover at +30 s.
 - **Spec:** FRONTEND.md §4; API.md §1.1–1.3, §4
 - **Files:** `frontend/src/routes/tablet/**`, `src/lib/{time,sound}.ts`, `src/components/Countdown.tsx`
 - **Build:** everything in FRONTEND.md §4 except the call screen. `useTabletCases` reducer with version ordering; snapshot on every (re)connect; receipts; idempotent ACK; takeover overlay; audio unlock banner; "Simulate offline" toggle.
@@ -215,12 +216,14 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
   ```
 
 ### F-02 · Tablet call screen
-- [ ] **Owner** F · **Est** 30 min · **Depends** F-01, B-06
+- [x] **Owner** F · **Est** 30 min · **Depends** F-01, B-06
+  - Notes: verified in browser: call screen at ~+75 s on both tabs, Answer+1 closes card and call on both, reload restores call from snapshot; timeline has DTMF_ACKNOWLEDGED.
 - **Spec:** FRONTEND.md §4 (call screen); API.md §1.7, §4 (`CallMessage`)
 - **Done when:** manual: no-ACK case → phone UI at +75 s → Answer → press 1 → card and call screen close on all tablets; timeline shows `DTMF_ACKNOWLEDGED`.
 
 ### F-03 · Simulator page
-- [ ] **Owner** F · **Est** 40 min · **Depends** F-00, B-01
+- [x] **Owner** F · **Est** 40 min · **Depends** F-00, B-01
+  - Notes: simulator drives full lifecycle against live OMS; Customer cancels produces a card on /tablet.
 - **Spec:** FRONTEND.md §3; API.md §2
 - **Done when:** manual: full order lifecycle from buttons; illegal buttons disabled; "Customer cancels" produces a card on `/tablet`.
 

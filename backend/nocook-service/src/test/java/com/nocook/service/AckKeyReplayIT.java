@@ -9,7 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import org.junit.jupiter.api.Test;
 
 /** R13 (B-05 side): idempotency of the ACK endpoint. */
-class AckIdempotencyIT extends B0xBaseIT {
+class AckKeyReplayIT extends B0xBaseIT {
 
     @Test
     void same_key_twice_is_200_then_200_duplicate_and_different_key_is_409() {
