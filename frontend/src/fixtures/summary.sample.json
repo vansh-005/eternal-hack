@@ -1,0 +1,33 @@
+{
+  "_fixture": "SAMPLE VALUES - NOT A RUN RESULT. Shape follows docs/OUTPUT.md section 3. Every number below is invented for layout purposes.",
+  "runId": "SAMPLE-fixture-P3",
+  "profile": "P3",
+  "kind": "MEASURED",
+  "startedAt": "2026-01-01T00:00:00Z",
+  "verdict": "PASS",
+  "verdictReasons": [],
+  "latency": {
+    "caseOpen": { "n": 5040, "p50": 0.041, "p95": 0.12, "p99": 0.31, "slo": 2.0, "shareWithinSlo": 0.9996 },
+    "cardDelivery": { "n": 5000, "p50": 0.05, "p95": 0.2, "p99": 0.6, "slo": 2.0, "shareWithinSlo": 0.999 },
+    "cardRender": { "n": 5000, "p50": 0.08, "p95": 0.3, "p99": 0.9, "slo": 2.0, "shareWithinSlo": 0.998 },
+    "ackApi": { "n": 1200, "p50": 0.01, "p95": 0.04, "p99": 0.09, "slo": 0.3, "shareWithinSlo": 1 },
+    "timerLateness": {
+      "L1": { "n": 900, "p50": 0.2, "p95": 0.8, "p99": 1.4, "slo": 3.0, "shareWithinSlo": 0.999 },
+      "IVR": { "n": 300, "p50": 0.2, "p95": 0.9, "p99": 1.5, "slo": 3.0, "shareWithinSlo": 0.999 },
+      "EXPIRY": { "n": 100, "p50": 0.2, "p95": 0.9, "p99": 1.6, "slo": 3.0, "shareWithinSlo": 0.999 }
+    }
+  },
+  "throughput": {
+    "casesOpenedPerSecond": { "mean": 8.4, "max30s": 9.1 },
+    "firehoseAchieved": 13980,
+    "k6": { "iterations": 5040, "dropped": 0, "httpP99": 0.25 }
+  },
+  "backlog": { "queuePeak": 12, "drainSeconds": 3, "outboxPendingPeak": 4, "deadlinesOverduePeak": 0 },
+  "knee": null,
+  "bottleneck": null,
+  "invariantsPass": true,
+  "durationSeconds": 600,
+  "targetRate": 8,
+  "headline": "SAMPLE: this sentence is a fixture, not a measured result.",
+  "grafana": { "liveSlos": "http://localhost:3000/d/nocook-live-slos" }
+}

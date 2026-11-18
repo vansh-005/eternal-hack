@@ -1,0 +1,20 @@
+{
+  "_fixture": "SAMPLE VALUES - NOT A RUN RESULT. Shape follows docs/OUTPUT.md section 4.",
+  "runId": "SAMPLE-fixture-P3",
+  "checkedAt": "2026-01-01T00:10:00Z",
+  "checks": [
+    { "name": "duplicate_cases", "value": 0, "rule": "== 0", "pass": true },
+    { "name": "max_ivr_per_case", "value": 1, "rule": "<= 1", "pass": true },
+    { "name": "escalations_after_close", "value": 0, "rule": "== 0", "pass": true },
+    { "name": "escalations_after_max_age", "value": 0, "rule": "== 0", "pass": true },
+    { "name": "escalations_on_not_actionable", "value": 0, "rule": "== 0", "pass": true },
+    { "name": "lost_cases", "value": 0, "rule": "== 0", "pass": true },
+    { "name": "outbox_stuck", "value": 0, "rule": "== 0", "pass": true },
+    { "name": "fault_window_escalations", "value": 0, "rule": "== 0 (F4 only)", "pass": true }
+  ],
+  "counts": {
+    "cases": 5040,
+    "byState": { "ACKNOWLEDGED": 4900, "EXPIRED": 40, "NOT_ACTIONABLE": 100, "SUPERSEDED": 0, "open": 0 },
+    "duplicatesReceived": 0, "ivrReserved": 12, "ivrDuplicatePrevented": 0, "leaseTakeovers": 0, "lateAcks": 0
+  }
+}
