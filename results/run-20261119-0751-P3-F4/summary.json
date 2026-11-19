@@ -1,0 +1,204 @@
+{
+  "runId": "run-20261119-0751-P3-F4",
+  "profile": "P3",
+  "kind": "TESTED",
+  "startedAt": "2026-11-19T02:21:14.667Z",
+  "durationSeconds": 733,
+  "targetRate": 8.4,
+  "fault": {
+    "id": "F4",
+    "action": "oms-down",
+    "at": "2026-11-19T02:24:45.165Z",
+    "until": "2026-11-19T02:25:15.286Z"
+  },
+  "replicas": 3,
+  "window": {
+    "from": "2026-11-19T02:21:45.000Z",
+    "to": "2026-11-19T02:31:52.000Z",
+    "seconds": 607,
+    "k6Seconds": 601.6
+  },
+  "verdict": "PASS",
+  "verdictReasons": [],
+  "latency": {
+    "caseOpen": {
+      "n": 4645,
+      "p50": 0.0134,
+      "p95": 1.0245,
+      "p99": 25.4762,
+      "slo": 2,
+      "shareWithinSlo": 0.951645
+    },
+    "cardDelivery": {
+      "n": 4646,
+      "p50": 0.008,
+      "p95": 0.0214,
+      "p99": 0.0688,
+      "slo": 2,
+      "shareWithinSlo": 1,
+      "byClient": {
+        "tablet": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "slo": 2,
+          "shareWithinSlo": null
+        },
+        "swarm": {
+          "n": 4646,
+          "p50": 0.008,
+          "p95": 0.0214,
+          "p99": 0.0688,
+          "slo": 2,
+          "shareWithinSlo": 1
+        }
+      }
+    },
+    "cardRender": {
+      "n": 4646,
+      "p50": 0.0467,
+      "p95": 0.0668,
+      "p99": 0.1462,
+      "slo": 2,
+      "shareWithinSlo": 1,
+      "byClient": {
+        "tablet": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "slo": 2,
+          "shareWithinSlo": null
+        },
+        "swarm": {
+          "n": 4646,
+          "p50": 0.0467,
+          "p95": 0.0668,
+          "p99": 0.1462,
+          "slo": 2,
+          "shareWithinSlo": 1
+        }
+      }
+    },
+    "ackApi": {
+      "n": 3554,
+      "p50": 0.0045,
+      "p95": 0.0085,
+      "p99": 0.043,
+      "slo": 0.3,
+      "shareWithinSlo": 0.999146
+    },
+    "timerLateness": {
+      "L1": {
+        "n": 1814,
+        "p50": 0.1284,
+        "p95": 0.2535,
+        "p99": 0.3458,
+        "slo": 3,
+        "shareWithinSlo": 1
+      },
+      "IVR": {
+        "n": 878,
+        "p50": 0.1336,
+        "p95": 0.2501,
+        "p99": null,
+        "slo": 3,
+        "shareWithinSlo": 1
+      },
+      "EXPIRY": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "slo": 3,
+        "shareWithinSlo": null
+      }
+    },
+    "ackFanout": {
+      "n": 4202,
+      "p50": 0.0079,
+      "p95": 0.016,
+      "p99": 0.0857,
+      "slo": 2,
+      "shareWithinSlo": 1
+    },
+    "consumeLag": {
+      "n": 5585,
+      "p50": 0.0041,
+      "p95": 4.8348,
+      "p99": 23.0019,
+      "slo": null,
+      "shareWithinSlo": null
+    },
+    "omsRead": {
+      "n": 9546,
+      "p50": 0.0009,
+      "p95": 0.0021,
+      "p99": 0.0039,
+      "slo": null,
+      "shareWithinSlo": null
+    }
+  },
+  "throughput": {
+    "casesOpenedPerSecond": {
+      "mean": 7.721,
+      "max30s": 16.441
+    },
+    "acksPerSecond": {
+      "mean": 6.984,
+      "max30s": 12.161
+    },
+    "casesOpenedInWindow": 4645,
+    "firehoseAchieved": 4996,
+    "k6": {
+      "iterations": 5041,
+      "dropped": 0,
+      "httpP99": 0.0381,
+      "httpFailedRate": 0,
+      "testRunDurationSeconds": 600
+    }
+  },
+  "backlog": {
+    "queuePeak": 135,
+    "drainSeconds": 0,
+    "outboxPendingPeak": 12,
+    "omsOutboxPendingPeak": 71,
+    "deadlinesOverduePeak": 0,
+    "dlqAtEnd": 0
+  },
+  "resources": {
+    "cpuPeakByReplica": {
+      "mock-oms": 0.059,
+      "nocook-1": 0.018,
+      "nocook-2": 0.028,
+      "nocook-3": 0.021
+    },
+    "heapPeakMbByReplica": {
+      "nocook-1": 80.9,
+      "nocook-2": 65.6,
+      "nocook-3": 81.9
+    },
+    "hikariPendingPeak": 0,
+    "omsHikariPendingPeak": 0,
+    "systemCpuPeak": 0.282,
+    "note": "process_cpu_usage is the JVM share of all host cores (0..1)"
+  },
+  "knee": null,
+  "bottleneck": null,
+  "invariantsPass": true,
+  "faultEvidence": {},
+  "warnings": [
+    "500 cases from other sources (other run_id / manual traffic) opened inside this window: Prometheus latency blocks include them. Re-run on an otherwise idle stack for a proof run."
+  ],
+  "headline": "At 10× Zomato's record New Year's Eve peak, on one laptop with fault F4 (oms-down) injected: p99 case-open 25.4762 s (N = 4,645), 95.16% inside 2 s, 0 lost cases, max 1 IVR call per case, invariants all pass.",
+  "grafana": {
+    "liveSlos": "http://localhost:3000/d/nocook-live-slos?orgId=1&from=1795054874667&to=1795055622571",
+    "reliability": "http://localhost:3000/d/nocook-reliability?orgId=1&from=1795054874667&to=1795055622571",
+    "load": "http://localhost:3000/d/nocook-load?orgId=1&from=1795054874667&to=1795055622571"
+  },
+  "notes": {
+    "p99Rule": "p99 is null when N < 1000",
+    "cardDeliveryIncludesSwarmLag": true
+  }
+}
