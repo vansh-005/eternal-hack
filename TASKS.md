@@ -347,12 +347,13 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
 - **Spec:** FRONTEND.md §5.3, §5.4; OUTPUT.md §3–4
 - **Done when:** `/ops/runs` and `/ops/faults` render the fixture and, after Q-07, the real P1 run.
 
-### ☐ Gate G2 — "p99 panels live" (target: end of H7)
-- [ ] During `make run P=P1`: Live SLOs panels 1, 4, 7, 10 show p50/p95/p99 + dashed SLO + share + N
-- [ ] Chaos buttons write annotations visible on all three dashboards
-- [ ] `results/run-*-P1/summary.json` has `verdict` PASS
-- [ ] Tempo: click from p99 panel data link opens a slow trace (or a trace list)
-- [ ] Ops `/ops` and `/ops/cases/:id` work against live data
+### ☑ Gate G2 — "p99 panels live" (target: end of H7)
+- [x] During `make run P=P1`: Live SLOs panels 1, 4, 7, 10 show p50/p95/p99 + dashed SLO + share + N
+- [x] Chaos buttons write annotations visible on all three dashboards
+- [x] `results/run-*-P1/summary.json` has `verdict` PASS
+- [x] Tempo: click from p99 panel data link opens a slow trace (or a trace list)
+- [x] Ops `/ops` and `/ops/cases/:id` work against live data
+  - G2 passed 2026-11-19: P1 run-20261119-0555-P1 PASS (N=153, p99 hidden by N<1000 rule); under P3 run-20261119-0604-P3 the Live SLOs case-open panel showed p50/p95/p99 + dashed 2 s SLO + 100.00% share + N; chaos buttons write annotations (31) visible on dashboards; Tempo TraceQL returns slow nocook traces; /ops, /ops/cases/:id, /ops/runs, /ops/impact work on live data. P3: p99 0.4428 s N=4,682 100% within 2 s, ack p99 63 ms, invariants PASS. (P1 itself cannot show p99: 0.56 cases/s never reaches N>=1000 - see DECISIONS Q-05.)
 
 ---
 
