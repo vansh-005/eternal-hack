@@ -324,7 +324,8 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
   ```
 
 ### Q-07 · Run orchestration and export tools
-- [ ] **Owner** Q · **Est** 75 min · **Depends** Q-06, B-08
+- [x] **Owner** Q · **Est** 75 min · **Depends** Q-06, B-08
+  - Notes: run/export/demo-reset/readme-table built; validated: P1 3 min PASS (all 8 invariants), F6 (1,000 duplicates, 0 duplicate cases) PASS, F4 (0 escalations in OMS-down window, 600 deferred) PASS. Untested: F2,F3,F5,F7,P5,P6,REPLICAS=1. Host Postgres on 5432 shadows the container: tools fall back to docker exec psql.
 - **Spec:** LOAD_AND_CHAOS.md §5–§7; OUTPUT.md §1–§4; DATA_MODEL.md §4–5
 - **Files:** `tools/{run,export-run,demo-reset,readme-table,export-tests}.mjs`, Makefile targets
 - **Done when:**

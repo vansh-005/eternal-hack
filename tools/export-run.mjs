@@ -41,7 +41,8 @@ const k6EndMs = Date.parse(manifest.k6EndedAt ?? manifest.endedAt ?? new Date().
 const endedMs = Date.parse(manifest.endedAt ?? new Date().toISOString());
 const warmupMs = 30_000;
 const fromSec = Math.ceil((startedMs + warmupMs) / 1000);
-const toSec = Math.floor(k6EndMs / 1000);
+const EXPORT_LAG_SECONDS = 6; // OTLP step is 5 s: samples for the last arrivals reach Prometheus up to ~5 s after k6 ends
+const toSec = Math.floor(k6EndMs / 1000) + EXPORT_LAG_SECONDS;
 const D = Math.max(1, toSec - fromSec); // window length for [D s] @ toSec
 const k6Seconds = Math.max(1, (k6EndMs - k6StartMs) / 1000);
 
@@ -490,7 +491,7 @@ if (k6 === null) {
   reasons.push(`k6 dropped ${k6.dropped} iterations: the laptop could not generate the load`);
 } else {
   for (const c of checks) if (!c.pass) reasons.push(`invariant ${c.name}=${c.value} violates ${c.rule}`);
-  if (['P1', 'P2', 'P3'].includes(profile)) {
+  if (['P1', 'P2', 'P3'].includes(profile) && !fault) { // fault runs are judged on invariants + fault checks; SLO numbers are reported only
     if (caseOpen.n === 0) reasons.push('no cases opened in the window');
     else if (caseOpen.shareWithinSlo === null || caseOpen.shareWithinSlo < 0.99) reasons.push(`caseOpen.shareWithinSlo=${caseOpen.shareWithinSlo} < 0.99`);
     if (raw.ackApi !== null && raw.ackApi >= 0.3) reasons.push(`ackApi.p99=${raw.ackApi} s >= 0.3 s${ackApi.n < MIN_N_FOR_P99 ? ` (N=${ackApi.n}, not published)` : ''}`);
