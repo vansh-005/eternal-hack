@@ -336,12 +336,14 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
   ```
 
 ### F-04 · Ops Live, case timeline, chaos panel
-- [ ] **Owner** F · **Est** 90 min · **Depends** F-01, B-08 (Grafana panels need Q-05 for final ids; use the fixed ids from DASHBOARDS.md)
+- [x] **Owner** F · **Est** 90 min · **Depends** F-01, B-08 (Grafana panels need Q-05 for final ids; use the fixed ids from DASHBOARDS.md)
+  - Notes: verified live: KPI strip + replica chips, 4 embedded Grafana panels, chaos buttons (DB +300 ms toxic, pause consumers, reset all) change real state; chaos annotations land (31); timeline page on real case.
 - **Spec:** FRONTEND.md §5.1, §5.2, §6
 - **Done when:** manual: `/ops` shows KPIs updating, 4 Grafana panels, case list; clicking a case shows the full timeline with ms offsets; each chaos button changes state and a toast shows the time.
 
 ### F-05 · Runs and Faults pages
-- [ ] **Owner** F · **Est** 60 min · **Depends** F-04 (build against `frontend/src/fixtures/summary.sample.json` copied from OUTPUT.md until real runs exist)
+- [x] **Owner** F · **Est** 60 min · **Depends** F-04 (build against `frontend/src/fixtures/summary.sample.json` copied from OUTPUT.md until real runs exist)
+  - Notes: Runs page shows real run-20261119-0555-P1 (MEASURED, N=153) without fixture banner; Faults page renders fault table; R1-R13 status still 'unknown' (no endpoint for tests-*.json).
 - **Spec:** FRONTEND.md §5.3, §5.4; OUTPUT.md §3–4
 - **Done when:** `/ops/runs` and `/ops/faults` render the fixture and, after Q-07, the real P1 run.
 
@@ -383,7 +385,8 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
 - **Done when:** P6 knee identified with a named bottleneck in `results/<P6>/notes.md`.
 
 ### F-06 · Impact page
-- [ ] **Owner** F · **Est** 75 min · **Depends** F-05 (fixture from SIMULATION.md §5 until Q-08 lands)
+- [x] **Owner** F · **Est** 75 min · **Depends** F-05 (fixture from SIMULATION.md §5 until Q-08 lands)
+  - Notes: Impact page renders real sim-20261119-0321 via /api/ops/simulations/latest: CDF, Rs 3,521/1000 with sensitivity, funnel, assumptions, break-even explained.
 - **Spec:** FRONTEND.md §5.5; SIMULATION.md §5
 - **Done when:** `/ops/impact` renders the real `sim-summary.json` with SIMULATED banner, CDF chart, ₹ with sensitivity, funnel, assumptions.
 
