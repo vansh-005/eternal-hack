@@ -299,7 +299,8 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
   ```
 
 ### Q-05 · Metric names lock + three Grafana dashboards
-- [ ] **Owner** Q · **Est** 90 min · **Depends** B-07 (start metric-names as soon as B-07 has any meter)
+- [x] **Owner** Q · **Est** 90 min · **Depends** B-07 (start metric-names as soon as B-07 has any meter)
+  - Notes: metric lock (47 nocook_ lines) + 3 provisioned dashboards (uids nocook-live-slos/reliability/load, home=live-slos) via new provisioning yaml; live-slos verified in kiosk during P1. p99 gate restored to N>=1000 per spec.
 - **Spec:** DASHBOARDS.md (all); OBSERVABILITY.md §2
 - **Files:** `tools/metric-names.mjs`, `docs/METRIC_NAMES.lock.md`, `infra/grafana/dashboards/{live-slos,reliability,load}.json`
 - **Build:** lock file = all `nocook_*`, `oms_*`, `k6_*`, `http_server_requests*`, `jvm_*`, `hikaricp_*`, `process_*` names + datasource UIDs from `GET :3000/api/datasources` + distinct `le` values for each histogram. Then dashboards per DASHBOARDS.md with fixed uids and panel ids.

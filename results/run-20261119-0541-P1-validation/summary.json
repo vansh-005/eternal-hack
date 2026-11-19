@@ -1,0 +1,198 @@
+{
+  "runId": "run-20261119-0541-P1-validation",
+  "profile": "P1",
+  "kind": "MEASURED",
+  "startedAt": "2026-11-19T00:11:50.283Z",
+  "durationSeconds": 238,
+  "targetRate": 0.56,
+  "fault": null,
+  "replicas": 3,
+  "window": {
+    "from": "2026-11-19T00:12:21.000Z",
+    "to": "2026-11-19T00:15:22.000Z",
+    "seconds": 181,
+    "k6Seconds": 181.8
+  },
+  "verdict": "PASS",
+  "verdictReasons": [],
+  "latency": {
+    "caseOpen": {
+      "n": 196,
+      "p50": 0.0214,
+      "p95": 0.0293,
+      "p99": null,
+      "slo": 2,
+      "shareWithinSlo": 1
+    },
+    "cardDelivery": {
+      "n": 196,
+      "p50": 0.0135,
+      "p95": 0.0171,
+      "p99": null,
+      "slo": 2,
+      "shareWithinSlo": 1,
+      "byClient": {
+        "tablet": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "slo": 2,
+          "shareWithinSlo": null
+        },
+        "swarm": {
+          "n": 196,
+          "p50": 0.0135,
+          "p95": 0.0171,
+          "p99": null,
+          "slo": 2,
+          "shareWithinSlo": 1
+        }
+      }
+    },
+    "cardRender": {
+      "n": 195,
+      "p50": 0.0565,
+      "p95": 0.0828,
+      "p99": null,
+      "slo": 2,
+      "shareWithinSlo": 1,
+      "byClient": {
+        "tablet": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "slo": 2,
+          "shareWithinSlo": null
+        },
+        "swarm": {
+          "n": 195,
+          "p50": 0.0565,
+          "p95": 0.0828,
+          "p99": null,
+          "slo": 2,
+          "shareWithinSlo": 1
+        }
+      }
+    },
+    "ackApi": {
+      "n": 151,
+      "p50": 0.0078,
+      "p95": 0.0103,
+      "p99": null,
+      "slo": 0.3,
+      "shareWithinSlo": 1
+    },
+    "timerLateness": {
+      "L1": {
+        "n": 71,
+        "p50": 0.1293,
+        "p95": 0.2414,
+        "p99": null,
+        "slo": 3,
+        "shareWithinSlo": 1
+      },
+      "IVR": {
+        "n": 31,
+        "p50": 0.14,
+        "p95": 0.2406,
+        "p99": null,
+        "slo": 3,
+        "shareWithinSlo": 1
+      },
+      "EXPIRY": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "slo": 3,
+        "shareWithinSlo": null
+      }
+    },
+    "ackFanout": {
+      "n": 172,
+      "p50": 0.0133,
+      "p95": 0.0186,
+      "p99": null,
+      "slo": 2,
+      "shareWithinSlo": 1
+    },
+    "consumeLag": {
+      "n": 214,
+      "p50": 0.0075,
+      "p95": 0.0096,
+      "p99": null,
+      "slo": null,
+      "shareWithinSlo": null
+    },
+    "omsRead": {
+      "n": 316,
+      "p50": 0.003,
+      "p95": 0.0042,
+      "p99": null,
+      "slo": null,
+      "shareWithinSlo": null
+    }
+  },
+  "throughput": {
+    "casesOpenedPerSecond": {
+      "mean": 1.076,
+      "max30s": 1.6
+    },
+    "acksPerSecond": {
+      "mean": 0.941,
+      "max30s": 1.2
+    },
+    "casesOpenedInWindow": 196,
+    "firehoseAchieved": 933,
+    "k6": {
+      "iterations": 101,
+      "dropped": 0,
+      "httpP99": 0.0111,
+      "httpFailedRate": 0,
+      "testRunDurationSeconds": 180
+    }
+  },
+  "backlog": {
+    "queuePeak": 0,
+    "drainSeconds": 0,
+    "outboxPendingPeak": 1,
+    "omsOutboxPendingPeak": 0,
+    "deadlinesOverduePeak": 0,
+    "dlqAtEnd": 0
+  },
+  "resources": {
+    "cpuPeakByReplica": {
+      "mock-oms": 0.017,
+      "nocook-1": 0.004,
+      "nocook-2": 0.006,
+      "nocook-3": 0.005
+    },
+    "heapPeakMbByReplica": {
+      "nocook-1": 63.2,
+      "nocook-2": 65.3,
+      "nocook-3": 66.6
+    },
+    "hikariPendingPeak": 0,
+    "omsHikariPendingPeak": 0,
+    "systemCpuPeak": 0.236,
+    "note": "process_cpu_usage is the JVM share of all host cores (0..1)"
+  },
+  "knee": null,
+  "bottleneck": null,
+  "invariantsPass": true,
+  "warnings": [
+    "113 cases from other sources (other run_id / manual traffic) opened inside this window: Prometheus latency blocks include them. Re-run on an otherwise idle stack for a proof run."
+  ],
+  "headline": "At the modelled dinner peak (93 orders/s) on one laptop, p99 case-open was not reported (N = 196 < 1,000), with 100.00% of cases inside the 2 s SLO.",
+  "grafana": {
+    "liveSlos": "http://localhost:3000/d/nocook-live-slos?orgId=1&from=1795047110283&to=1795047363610",
+    "reliability": "http://localhost:3000/d/nocook-reliability?orgId=1&from=1795047110283&to=1795047363610",
+    "load": "http://localhost:3000/d/nocook-load?orgId=1&from=1795047110283&to=1795047363610"
+  },
+  "notes": {
+    "p99Rule": "p99 is null when N < 1000",
+    "cardDeliveryIncludesSwarmLag": true
+  }
+}

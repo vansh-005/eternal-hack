@@ -1,0 +1,14 @@
+apiVersion: 1
+
+providers:
+  - name: "NoCook"
+    orgId: 1
+    folder: "NoCook"
+    folderUid: nocook
+    type: file
+    disableDeletion: true
+    allowUiUpdates: false
+    updateIntervalSeconds: 10
+    options:
+      path: /otel-lgtm/grafana/conf/provisioning/dashboards/custom
+      foldersFromFilesStructure: false

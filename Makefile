@@ -58,22 +58,22 @@ smoke:
 	node tools/smoke.mjs
 
 metric-names:
-	@echo "not yet implemented: Q-05"
+	@node tools/metric-names.mjs > docs/METRIC_NAMES.lock.md
 
 run:
-	@echo "not yet implemented: Q-07"
+	node tools/run.mjs --profile $(P) $(if $(FAULT),--fault $(FAULT)) $(if $(REPLICAS),--replicas $(REPLICAS)) $(if $(NOTE),--note "$(NOTE)")
 
 export:
-	@echo "not yet implemented: Q-07"
+	node tools/export-run.mjs --run $(RUN)
 
 demo-reset:
-	@echo "not yet implemented: Q-07"
+	node tools/demo-reset.mjs
 
 sim:
 	cd backend && ./mvnw -q -pl nocook-sim -am package -DskipTests && java -jar nocook-sim/target/nocook-sim.jar --seed 2026 --n 10000 --out ../results/sim-$$(date +%Y%m%d-%H%M)
 
 screenshots:
-	@echo "not yet implemented: Q-07"
+	@echo "not yet implemented: screenshots (Q-09)"
 
 scale1:
 	$(DC) stop nocook-2 nocook-3
