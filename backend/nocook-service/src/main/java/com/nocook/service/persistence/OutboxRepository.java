@@ -1,5 +1,6 @@
 package com.nocook.service.persistence;
 
+import com.nocook.service.observability.Spans;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -19,10 +20,14 @@ public class OutboxRepository {
 
     public record ReapedOutbox(UUID caseId, String type, String previousOwner) {}
 
-    private final JdbcClient jdbc;
+    public static final String TRACEPARENT_KEY = "traceparent";
 
-    public OutboxRepository(JdbcClient jdbc) {
+    private final JdbcClient jdbc;
+    private final Spans spans;
+
+    public OutboxRepository(JdbcClient jdbc, Spans spans) {
         this.jdbc = jdbc;
+        this.spans = spans;
     }
 
     /** Insert an intent; UNIQUE(action_key) makes repeats no-ops. Returns false when the key already existed. */
@@ -30,12 +35,15 @@ public class OutboxRepository {
             String actionKey, String type, UUID caseId, String payloadJson, Instant availableAt, Instant createdAt) {
         int inserted = jdbc.sql("""
                         insert into nocook.outbox (action_key, type, case_id, payload, available_at, created_at)
-                        values (:actionKey, :type, :caseId, cast(:payload as jsonb), :availableAt, :createdAt)
+                        values (:actionKey, :type, :caseId,
+                                cast(:payload as jsonb) || jsonb_build_object('traceparent', cast(:traceparent as text)),
+                                :availableAt, :createdAt)
                         on conflict (action_key) do nothing""")
                 .param("actionKey", actionKey)
                 .param("type", type)
                 .param("caseId", caseId)
                 .param("payload", payloadJson)
+                .param("traceparent", spans.currentTraceparent())
                 .param("availableAt", CaseRepository.utc(availableAt))
                 .param("createdAt", CaseRepository.utc(createdAt))
                 .update();

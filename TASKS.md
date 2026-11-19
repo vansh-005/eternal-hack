@@ -270,7 +270,8 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
 ## 3. Phase H4–7 — Telemetry + screens
 
 ### B-07 · Meters, OTLP, traces, gauges
-- [ ] **Owner** B · **Est** 60 min · **Depends** G1
+- [x] **Owner** B · **Est** 60 min · **Depends** G1
+  - Notes: All OBSERVABILITY §3 meters live in Prometheus with replica tag; le buckets 0.3/2/3/30 present; 3 replicas report cases_open; one Tempo trace spans mock-oms + nocook (no JDBC spans - starter does not instrument JDBC).
 - **Spec:** OBSERVABILITY.md (all); BACKEND.md §3.5 (management block); DASHBOARDS.md §2 (invariant gauges)
 - **Files:** `…/observability/NocookMeters.java`, `…/scheduling/GaugeSampler.java`, `ReplicaConfig`, `application.yml` (both apps), mock-oms `OmsMeters`
 - **Build:** every meter in OBSERVABILITY.md §3 with exact names and tags; replica common tag; SLO/percentile config with bracket keys; OTLP step 5 s, base unit seconds; AMQP observation on (firehose template off); trace id on cases/facts; manual spans.
@@ -283,7 +284,8 @@ Start P2 (20 min) as early in H7 as possible; it runs while other work continues
   ```
 
 ### B-08 · Ops API, chaos, control channel
-- [ ] **Owner** B · **Est** 60 min · **Depends** G1
+- [x] **Owner** B · **Est** 60 min · **Depends** G1
+  - Notes: Ops API + chaos + nocook/control live; 3 chaos annotations in Grafana; kill-replica halts nocook-2; ChaosControllerIT 10 + ObservabilityIT 3; full service verify 77 tests green. Rabbit mgmt API consumer counts lag ~5 s.
 - **Spec:** API.md §1.5, §1.6, §1.9, §4 (`nocook/control`); ARCHITECTURE.md §5; INFRA.md §4 (toxiproxy API)
 - **Files:** `…/api/{OpsController,ChaosController,InternalController}.java`, `…/chaos/**`, `…/notifications/{ControlChannel,ListenerControl}.java`, `OpsEventRepository`
 - **Done when:**

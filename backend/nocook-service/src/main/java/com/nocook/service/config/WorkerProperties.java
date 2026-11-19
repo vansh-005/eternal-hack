@@ -14,7 +14,8 @@ import org.springframework.context.annotation.Configuration;
     WorkerProperties.Outbox.class,
     WorkerProperties.Mqtt.class,
     WorkerProperties.Telephony.class,
-    WorkerProperties.OmsRetry.class
+    WorkerProperties.OmsRetry.class,
+    com.nocook.service.chaos.ChaosProperties.class
 })
 public class WorkerProperties {
 

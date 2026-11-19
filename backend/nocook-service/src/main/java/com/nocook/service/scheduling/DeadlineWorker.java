@@ -6,6 +6,7 @@ import com.nocook.domain.model.Timings;
 import com.nocook.domain.oms.OmsView;
 import com.nocook.service.application.EscalationService;
 import com.nocook.service.config.WorkerProperties;
+import com.nocook.service.observability.Spans;
 import com.nocook.service.oms.OmsReadPort;
 import com.nocook.service.persistence.CaseRepository;
 import com.nocook.service.persistence.CaseRepository.CaseRecord;
@@ -14,6 +15,7 @@ import com.nocook.service.persistence.DeadlineRepository.ClaimedDeadline;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -41,6 +43,7 @@ public class DeadlineWorker {
     private final Timings timings;
     private final WorkerProperties.Deadlines properties;
     private final String workerId;
+    private final Spans spans;
 
     @Autowired
     public DeadlineWorker(
@@ -51,8 +54,9 @@ public class DeadlineWorker {
             Clock clock,
             Timings timings,
             WorkerProperties.Deadlines properties,
-            WorkerProperties.Replica replica) {
-        this(deadlines, cases, omsRead, escalationService, clock, timings, properties,
+            WorkerProperties.Replica replica,
+            Spans spans) {
+        this(deadlines, cases, omsRead, escalationService, clock, timings, properties, spans,
                 replica.replicaId() + "-" + UUID.randomUUID().toString().substring(0, 8));
     }
 
@@ -64,7 +68,9 @@ public class DeadlineWorker {
             Clock clock,
             Timings timings,
             WorkerProperties.Deadlines properties,
+            Spans spans,
             String workerId) {
+        this.spans = spans;
         this.deadlines = deadlines;
         this.cases = cases;
         this.omsRead = omsRead;
@@ -77,7 +83,7 @@ public class DeadlineWorker {
 
     /** Same collaborators under another lease-owner id (tests that simulate competing workers). */
     public DeadlineWorker withWorkerId(String otherWorkerId) {
-        return new DeadlineWorker(deadlines, cases, omsRead, escalationService, clock, timings, properties, otherWorkerId);
+        return new DeadlineWorker(deadlines, cases, omsRead, escalationService, clock, timings, properties, spans, otherWorkerId);
     }
 
     public String workerId() {
@@ -106,8 +112,12 @@ public class DeadlineWorker {
 
     private void process(ClaimedDeadline deadline) {
         try {
-            OmsView view = readOmsIfNeeded(deadline);
-            escalationService.applyDeadline(deadline, view);
+            spans.inSpan("deadline.process", null,
+                    Map.of("deadline.kind", deadline.kind().name(), "case.id", deadline.caseId().toString()),
+                    () -> {
+                        OmsView view = readOmsIfNeeded(deadline);
+                        escalationService.applyDeadline(deadline, view);
+                    });
         } catch (RuntimeException ex) {
             log.error("deadline processing failed caseId={} kind={} reason={}",
                     deadline.caseId(), deadline.kind(), ex.toString(), ex);

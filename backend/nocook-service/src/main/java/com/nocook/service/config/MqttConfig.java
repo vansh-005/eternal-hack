@@ -21,7 +21,13 @@ public class MqttConfig {
     private static final Logger log = LoggerFactory.getLogger(MqttConfig.class);
 
     @Bean
-    public Mqtt5AsyncClient mqttClient(WorkerProperties.Mqtt mqtt, WorkerProperties.Replica replica) {
+    public MqttConnectHooks mqttConnectHooks() {
+        return new MqttConnectHooks();
+    }
+
+    @Bean
+    public Mqtt5AsyncClient mqttClient(
+            WorkerProperties.Mqtt mqtt, WorkerProperties.Replica replica, MqttConnectHooks hooks) {
         return MqttClient.builder()
                 .useMqttVersion5()
                 .identifier("nocook-" + replica.replicaId())
@@ -31,15 +37,18 @@ public class MqttConfig {
                 .initialDelay(500, TimeUnit.MILLISECONDS)
                 .maxDelay(5, TimeUnit.SECONDS)
                 .applyAutomaticReconnect()
-                .addConnectedListener(ctx -> log.info("mqtt connected host={}", mqtt.host()))
+                .addConnectedListener(ctx -> {
+                    log.info("mqtt connected host={}", mqtt.host());
+                    hooks.fire();
+                })
                 .addDisconnectedListener(ctx -> log.warn("mqtt disconnected cause={}", ctx.getCause().toString()))
                 .buildAsync();
     }
 
     @Bean
     public com.nocook.service.notifications.CardPublisher mqttCardPublisher(
-            Mqtt5AsyncClient client, WorkerProperties.Mqtt mqtt) {
-        return new com.nocook.service.notifications.MqttCardPublisher(client, mqtt);
+            Mqtt5AsyncClient client, WorkerProperties.Mqtt mqtt, com.nocook.service.observability.Spans spans) {
+        return new com.nocook.service.notifications.MqttCardPublisher(client, mqtt, spans);
     }
 
     /** Non-blocking first connect; the publisher re-triggers a connect if the client is idle-disconnected. */

@@ -5,7 +5,9 @@ import com.hivemq.client.mqtt.datatypes.MqttQos;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PublishResult;
 import com.nocook.service.config.WorkerProperties;
+import com.nocook.service.observability.Spans;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -23,9 +25,17 @@ public class MqttCardPublisher implements CardPublisher {
     private final Mqtt5AsyncClient client;
     private final WorkerProperties.Mqtt properties;
 
+    private final @org.jspecify.annotations.Nullable Spans spans;
+
     public MqttCardPublisher(Mqtt5AsyncClient client, WorkerProperties.Mqtt properties) {
+        this(client, properties, null);
+    }
+
+    public MqttCardPublisher(
+            Mqtt5AsyncClient client, WorkerProperties.Mqtt properties, @org.jspecify.annotations.Nullable Spans spans) {
         this.client = client;
         this.properties = properties;
+        this.spans = spans;
     }
 
     public static void connect(Mqtt5AsyncClient client) {
@@ -47,6 +57,14 @@ public class MqttCardPublisher implements CardPublisher {
     }
 
     private void publish(String topic, String json) {
+        if (spans == null) {
+            publishNow(topic, json);
+            return;
+        }
+        spans.inSpan("mqtt.publish", null, Map.of("topic", topic), () -> publishNow(topic, json));
+    }
+
+    private void publishNow(String topic, String json) {
         if (client.getState() == MqttClientState.DISCONNECTED) {
             connect(client);
         }

@@ -9,6 +9,7 @@ import com.nocook.service.config.TraceIds;
 import com.nocook.service.config.WorkerProperties;
 import com.nocook.service.notifications.CardPublisher;
 import com.nocook.service.observability.NocookMeters;
+import com.nocook.service.observability.Spans;
 import com.nocook.service.persistence.CaseEventRepository;
 import com.nocook.service.persistence.OutboxRepository;
 import com.nocook.service.persistence.OutboxRepository.ClaimedOutbox;
@@ -61,6 +62,7 @@ public class OutboxDispatcher implements OutboxWaker, DisposableBean {
     private final TelephonyService telephony;
     private final NocookMeters meters;
     private final TraceIds traceIds;
+    private final Spans spans;
     private final JsonMapper jsonMapper;
     private final Clock clock;
     private final TransactionTemplate transaction;
@@ -77,6 +79,7 @@ public class OutboxDispatcher implements OutboxWaker, DisposableBean {
             TelephonyService telephony,
             NocookMeters meters,
             TraceIds traceIds,
+            Spans spans,
             JsonMapper jsonMapper,
             Clock clock,
             TransactionTemplate transaction,
@@ -90,6 +93,7 @@ public class OutboxDispatcher implements OutboxWaker, DisposableBean {
         this.telephony = telephony;
         this.meters = meters;
         this.traceIds = traceIds;
+        this.spans = spans;
         this.jsonMapper = jsonMapper;
         this.clock = clock;
         this.transaction = transaction;
@@ -168,9 +172,20 @@ public class OutboxDispatcher implements OutboxWaker, DisposableBean {
 
     private void dispatchSafely(ClaimedOutbox row) {
         try {
-            dispatch(row);
+            String parent = traceparentOf(row);
+            spans.inSpan("outbox.dispatch", parent, Map.of("outbox.type", row.type()), () -> dispatch(row));
         } catch (RuntimeException ex) {
             recordFailure(row, ex);
+        }
+    }
+
+    /** The traceparent of the transaction that wrote the row (null when it was written outside a span). */
+    private @org.jspecify.annotations.Nullable String traceparentOf(ClaimedOutbox row) {
+        try {
+            JsonNode node = jsonMapper.readTree(row.payload()).path(OutboxRepository.TRACEPARENT_KEY);
+            return node.isString() ? node.asString() : null;
+        } catch (RuntimeException ex) {
+            return null;
         }
     }
 
@@ -201,6 +216,7 @@ public class OutboxDispatcher implements OutboxWaker, DisposableBean {
     /** The dispatcher stamps sentAt (API.md section 4) at publish time. */
     private String stamped(JsonNode payload) {
         ObjectNode copy = ((ObjectNode) payload).deepCopy();
+        copy.remove(OutboxRepository.TRACEPARENT_KEY);
         copy.put("sentAt", Iso.format(clock.instant()));
         return jsonMapper.writeValueAsString(copy);
     }

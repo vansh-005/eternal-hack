@@ -2,6 +2,7 @@ package com.nocook.service.observability;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import java.time.Duration;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,6 +16,49 @@ public class NocookMeters {
 
     public NocookMeters(MeterRegistry registry) {
         this.registry = registry;
+        preRegisterCounters();
+    }
+
+    /**
+     * Creates every counter series at zero so dashboards and the metric-name lock see them before the first event
+     * (a Micrometer counter that was never touched would not exist in Prometheus at all).
+     */
+    private void preRegisterCounters() {
+        for (String outcome : List.of("opened", "not_actionable", "duplicate", "oms_unavailable", "invalid")) {
+            registry.counter("nocook.events.consumed", "outcome", outcome);
+        }
+        registry.counter("nocook.cases.opened");
+        for (String state : List.of("ACKNOWLEDGED", "SUPERSEDED", "EXPIRED")) {
+            registry.counter("nocook.cases.closed", "state", state);
+        }
+        for (String code : List.of("ALREADY_ACKNOWLEDGED", "CASE_CLOSED", "NOT_ACTIONABLE")) {
+            registry.counter("nocook.acks.rejected", "code", code);
+        }
+        for (String kind : List.of("L1", "IVR", "EXPIRY")) {
+            for (String outcome : List.of("fired", "blocked", "deferred", "noop")) {
+                registry.counter("nocook.escalations", "kind", kind, "outcome", outcome);
+            }
+        }
+        registry.counter("nocook.ivr.reserved");
+        registry.counter("nocook.ivr.duplicate_prevented");
+        registry.counter("nocook.lease.takeovers", "table", "deadlines");
+        registry.counter("nocook.lease.takeovers", "table", "outbox");
+        for (String kind : List.of("status", "dtmf")) {
+            for (String result : List.of("ok", "duplicate", "bad_signature")) {
+                registry.counter("nocook.webhooks", "kind", kind, "result", result);
+            }
+        }
+        for (String action : CHAOS_ACTIONS) {
+            registry.counter("nocook.chaos", "action", action);
+        }
+    }
+
+    public static final List<String> CHAOS_ACTIONS =
+            List.of("db-latency", "oms-down", "listener", "kill-replica", "duplicate-storm", "reset");
+
+    /** One chaos endpoint call. */
+    public void chaos(String action) {
+        registry.counter("nocook.chaos", "action", action).increment();
     }
 
     /** outcome = opened | not_actionable | duplicate | oms_unavailable | invalid */
