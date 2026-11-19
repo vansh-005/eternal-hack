@@ -74,7 +74,7 @@ services:
   mock-oms:
     build: { context: ../backend, dockerfile: Dockerfile, args: { MODULE: mock-oms } }
     image: mock-oms:local
-    environment: { RABBIT_HOST: rabbitmq, OTLP_HTTP: "http://lgtm:4318", TRACING_SAMPLE: "${TRACING_SAMPLE:-1.0}" }
+    environment: { RABBIT_HOST: rabbitmq, OTLP_HTTP: "http://lgtm:4318", TRACING_SAMPLE: "${TRACING_SAMPLE:-1.0}", SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: "50" }
     ports: ["8090:8090"]
     depends_on:
       postgres: { condition: service_healthy }

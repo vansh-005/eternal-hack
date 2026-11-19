@@ -47,7 +47,7 @@ const FAULTS = {
   F4: { action: 'oms-down', params: { down: true }, at: 180, hold: 30 },
   F5: { action: 'db-latency', params: { ms: 300 }, at: 180, hold: 60 },
   F6: { action: 'duplicate-storm', params: { lastN: 50, times: 20 }, at: 120, hold: null },
-  F7: { action: 'race-ready-then-cancel', params: { count: 500 }, at: 120, hold: null },
+  F7: { action: 'race-ready-then-cancel', params: { count: 500, outletId: 'outlet-race', gapMillis: 5 }, at: 120, hold: null },
 };
 if (!PROFILES[profileArg] || (faultArg && !FAULTS[faultArg]) || ![1, 3].includes(replicas) || (faultArg === 'F2' && replicas < 2)) {
   console.error('usage: node tools/run.mjs --profile P1..P6 [--fault F2..F7] [--replicas 1|3] [--note "..."] [--duration 3m --tag validation]');

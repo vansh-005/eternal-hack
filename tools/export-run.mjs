@@ -341,6 +341,10 @@ add('outbox_stuck', await one(
   [checkedAt.toISOString()]), '== 0', null);
 
 // Fault-specific checks
+if (fault) {
+  // A fault run is only valid if the fault was actually injected (a rejected request must not pass vacuously).
+  add('fault_injected', fault.error ? 1 : 0, '== 0', null);
+}
 const faultAt = fault?.at ? new Date(fault.at) : null;
 const faultUntil = fault?.until ? new Date(fault.until) : null;
 if (fault?.id === 'F4' && faultAt && faultUntil) {
@@ -356,6 +360,9 @@ if (fault?.id === 'F7' && faultAt) {
   const raceNotNa = await one(
     `select count(*) v from nocook.cases where outlet_id = 'outlet-race' and opened_at >= $1 and state <> 'NOT_ACTIONABLE'`, [new Date(faultAt.getTime() - 5000).toISOString()]);
   add('f7_race_cases_not_actionable_violations', raceNotNa, '== 0 (F7 only)', null);
+  const raceTotal = await one(
+    `select count(*) v from nocook.cases where outlet_id = 'outlet-race' and opened_at >= $1`, [new Date(faultAt.getTime() - 5000).toISOString()]);
+  add('f7_race_cases_present', raceTotal, '>= 500 (F7 only)', null);
 }
 if (fault?.id === 'F3') {
   add('f3_queue_drained', Math.round(await scalar(`max(nocook_queue_ready{queue="${QUEUE}"})`, Math.floor(endedMs / 1000)) ?? -1), '== 0 (F3 only)', null);
@@ -391,6 +398,7 @@ const rules = {
   '== 0 (F4 only)': (v) => v === 0,
   '> 0 (F4 only)': (v) => v > 0,
   '== 0 (F7 only)': (v) => v === 0,
+  '>= 500 (F7 only)': (v) => v >= 500,
   '== 0 (F3 only)': (v) => v === 0,
   '<= 60 (F2 only)': (v) => v <= 60,
   '<= 60 (F5 only)': (v) => v <= 60,

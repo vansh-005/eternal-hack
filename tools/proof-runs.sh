@@ -28,4 +28,6 @@ step P4 node tools/run.mjs --profile P4 --note "P4 three replicas"
 step P5 node tools/run.mjs --profile P5 --note "P5 burst"
 step P6 node tools/run.mjs --profile P6 --note "P6 knee ramp"
 TRACING_SAMPLE=1.0 $DC up -d nocook-1 nocook-2 nocook-3 mock-oms >> $PROOF_DIR/sample.log 2>&1
+sleep 45
+step P3-F7 node tools/run.mjs --profile P3 --fault F7 --note "fault run F7 (race x500)"
 echo "$(date +%H:%M:%S) ALL DONE" >> $PROOF_DIR/progress.txt
