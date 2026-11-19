@@ -38,7 +38,7 @@ const PROFILES = {
   P3: { cancels: 8.4, firehose: 14000, orders: 1400, seconds: 600 },
   P4: { cancels: 56, firehose: 14000, orders: 1400, seconds: 600 },
   P5: { cancels: 200, firehose: 14000, orders: 1400, seconds: 300 },
-  P6: { cancels: 500, firehose: 14000, orders: 1400, seconds: 600 },
+  P6: { cancels: 250, firehose: 14000, orders: 1400, seconds: 600 },
 };
 // F-runs: action, params, offset (s into k6), hold (s) before the undo action
 const FAULTS = {

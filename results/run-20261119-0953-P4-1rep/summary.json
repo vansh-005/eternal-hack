@@ -1,0 +1,196 @@
+{
+  "runId": "run-20261119-0953-P4-1rep",
+  "profile": "P4",
+  "kind": "MEASURED",
+  "startedAt": "2026-11-19T04:23:32.539Z",
+  "durationSeconds": 765,
+  "targetRate": 56,
+  "fault": null,
+  "replicas": 1,
+  "window": {
+    "from": "2026-11-19T04:24:03.000Z",
+    "to": "2026-11-19T04:34:10.000Z",
+    "seconds": 607,
+    "k6Seconds": 601.7
+  },
+  "verdict": "PASS",
+  "verdictReasons": [],
+  "latency": {
+    "caseOpen": {
+      "n": 31033,
+      "p50": 0.0404,
+      "p95": 0.7209,
+      "p99": 1.6743,
+      "slo": 2,
+      "shareWithinSlo": 0.995852
+    },
+    "cardDelivery": {
+      "n": 31033,
+      "p50": 0.0507,
+      "p95": 0.2473,
+      "p99": 1.3973,
+      "slo": 2,
+      "shareWithinSlo": 0.996986,
+      "byClient": {
+        "tablet": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "slo": 2,
+          "shareWithinSlo": null
+        },
+        "swarm": {
+          "n": 31033,
+          "p50": 0.0507,
+          "p95": 0.2473,
+          "p99": 1.3973,
+          "slo": 2,
+          "shareWithinSlo": 0.996986
+        }
+      }
+    },
+    "cardRender": {
+      "n": 31033,
+      "p50": 0.0942,
+      "p95": 0.4548,
+      "p99": 1.6378,
+      "slo": 2,
+      "shareWithinSlo": 0.994102,
+      "byClient": {
+        "tablet": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "slo": 2,
+          "shareWithinSlo": null
+        },
+        "swarm": {
+          "n": 31033,
+          "p50": 0.0942,
+          "p95": 0.4548,
+          "p99": 1.6378,
+          "slo": 2,
+          "shareWithinSlo": 0.994102
+        }
+      }
+    },
+    "ackApi": {
+      "n": 24133,
+      "p50": 0.0091,
+      "p95": 0.1478,
+      "p99": 0.4527,
+      "slo": 0.3,
+      "shareWithinSlo": 0.975788
+    },
+    "timerLateness": {
+      "L1": {
+        "n": 11845,
+        "p50": 0.2921,
+        "p95": 3.0726,
+        "p99": 5.303,
+        "slo": 3,
+        "shareWithinSlo": 0.947603
+      },
+      "IVR": {
+        "n": 5397,
+        "p50": 0.2995,
+        "p95": 3.0456,
+        "p99": 4.8175,
+        "slo": 3,
+        "shareWithinSlo": 0.948069
+      },
+      "EXPIRY": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "slo": 3,
+        "shareWithinSlo": null
+      }
+    },
+    "ackFanout": {
+      "n": 28303,
+      "p50": 0.0534,
+      "p95": 0.6238,
+      "p99": 1.583,
+      "slo": 2,
+      "shareWithinSlo": 0.996533
+    },
+    "consumeLag": {
+      "n": 33791,
+      "p50": 0.0145,
+      "p95": 0.3953,
+      "p99": 1.2991,
+      "slo": null,
+      "shareWithinSlo": null
+    },
+    "omsRead": {
+      "n": 51033,
+      "p50": 0.0018,
+      "p95": 0.0031,
+      "p99": 0.0055,
+      "slo": null,
+      "shareWithinSlo": null
+    }
+  },
+  "throughput": {
+    "casesOpenedPerSecond": {
+      "mean": 51.574,
+      "max30s": 55.327
+    },
+    "acksPerSecond": {
+      "mean": 46.809,
+      "max30s": 52.806
+    },
+    "casesOpenedInWindow": 31033,
+    "firehoseAchieved": 13987,
+    "k6": {
+      "iterations": 33600,
+      "dropped": 0,
+      "httpP99": 0.173,
+      "httpFailedRate": 0,
+      "testRunDurationSeconds": 600
+    }
+  },
+  "backlog": {
+    "queuePeak": 0,
+    "drainSeconds": 32,
+    "outboxPendingPeak": 118,
+    "omsOutboxPendingPeak": 46,
+    "deadlinesOverduePeak": 112,
+    "dlqAtEnd": 0
+  },
+  "resources": {
+    "cpuPeakByReplica": {
+      "mock-oms": 0.122,
+      "nocook-1": 0.069,
+      "nocook-2": 0.004,
+      "nocook-3": 0.005
+    },
+    "heapPeakMbByReplica": {
+      "nocook-1": 83.9,
+      "nocook-2": 49.6,
+      "nocook-3": 52.3
+    },
+    "hikariPendingPeak": 106,
+    "omsHikariPendingPeak": 0,
+    "systemCpuPeak": 0.537,
+    "note": "process_cpu_usage is the JVM share of all host cores (0..1)"
+  },
+  "knee": null,
+  "bottleneck": null,
+  "invariantsPass": true,
+  "warnings": [],
+  "headline": "At 100× the modelled cancellation rate (56 cancels/s, 14,000 events/s), on one laptop, p99 case-open was 1.6743 s (N = 31,033), with 99.59% of cases inside the 2 s SLO.",
+  "grafana": {
+    "liveSlos": "http://localhost:3000/d/nocook-live-slos?orgId=1&from=1795062212539&to=1795062992992",
+    "reliability": "http://localhost:3000/d/nocook-reliability?orgId=1&from=1795062212539&to=1795062992992",
+    "load": "http://localhost:3000/d/nocook-load?orgId=1&from=1795062212539&to=1795062992992"
+  },
+  "notes": {
+    "p99Rule": "p99 is null when N < 1000",
+    "cardDeliveryIncludesSwarmLag": true
+  }
+}

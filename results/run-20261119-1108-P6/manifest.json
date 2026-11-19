@@ -1,0 +1,46 @@
+{
+  "runId": "run-20261119-1108-P6",
+  "profile": "P6",
+  "kind": "MEASURED",
+  "startedAt": "2026-11-19T05:38:19.226Z",
+  "k6StartedAt": "2026-11-19T05:38:49.874Z",
+  "k6EndedAt": "2026-11-19T05:48:55.392Z",
+  "endedAt": "2026-11-19T05:52:05.108Z",
+  "window": {
+    "from": "2026-11-19T05:38:49.226Z",
+    "to": "2026-11-19T05:48:55.392Z"
+  },
+  "rates": {
+    "cancelsPerSecond": 250,
+    "firehoseEventsPerSecond": 14000,
+    "notionalOrdersPerSecond": 1400
+  },
+  "replicas": 3,
+  "tracingSample": 1,
+  "fault": null,
+  "commit": "3f5cd76",
+  "dirty": true,
+  "images": {
+    "postgres": "postgres:18",
+    "rabbitmq": "rabbitmq:4.3-management",
+    "mosquitto": "eclipse-mosquitto:2",
+    "toxiproxy": "ghcr.io/shopify/toxiproxy:2.13.0",
+    "lgtm": "grafana/otel-lgtm:0.41.0",
+    "k6": "grafana/k6:1.8.3",
+    "nginx": "nginx:stable-alpine3.24",
+    "node": "node:24-alpine"
+  },
+  "host": {
+    "cpuModel": "13th Gen Intel(R) Core(TM) i7-13620H",
+    "cores": 16,
+    "ramGb": 16,
+    "os": "Windows_NT 10.0.26200 (Windows 11 Home Single Language)",
+    "docker": "28.1.1",
+    "dockerCpus": 16,
+    "dockerMemGb": 7.6
+  },
+  "k6DurationSeconds": 600,
+  "note": "P6 knee ramp, ceiling 250 cancels/s",
+  "drainSeconds": 88,
+  "drained": true
+}

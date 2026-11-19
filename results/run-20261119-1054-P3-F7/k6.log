@@ -1,0 +1,6 @@
+k6 summary  run=run-20261119-1054-P3-F7 profile=P3
+  iterations: 5040  dropped: 0  http_reqs: 10231
+  http_req_failed rate: 0
+  http_req_duration: avg=14.02 med=5.73 p(95)=73.93 p(99)=138.37 max=760.07 ms
+  threshold dropped_iterations count==0: PASS
+  threshold http_req_failed rate<0.01: PASS

@@ -1,0 +1,77 @@
+{
+  "runId": "run-20261119-1108-P6",
+  "checkedAt": "2026-11-19T05:52:44.360Z",
+  "checks": [
+    {
+      "name": "duplicate_cases",
+      "value": 0,
+      "rule": "== 0",
+      "pass": true
+    },
+    {
+      "name": "max_ivr_per_case",
+      "value": 1,
+      "rule": "<= 1",
+      "pass": true
+    },
+    {
+      "name": "escalations_after_close",
+      "value": 0,
+      "rule": "== 0",
+      "pass": true
+    },
+    {
+      "name": "escalations_after_max_age",
+      "value": 0,
+      "rule": "== 0",
+      "pass": true
+    },
+    {
+      "name": "escalations_on_not_actionable",
+      "value": 0,
+      "rule": "== 0",
+      "pass": true
+    },
+    {
+      "name": "lost_cases",
+      "value": 0,
+      "rule": "== 0",
+      "pass": true
+    },
+    {
+      "name": "stuck_open",
+      "value": 0,
+      "rule": "== 0",
+      "pass": true
+    },
+    {
+      "name": "outbox_stuck",
+      "value": 0,
+      "rule": "== 0",
+      "pass": true
+    },
+    {
+      "name": "fault_window_escalations",
+      "value": null,
+      "rule": "== 0 (F4 only)",
+      "pass": true,
+      "applicable": false
+    }
+  ],
+  "counts": {
+    "cases": 77084,
+    "byState": {
+      "ACKNOWLEDGED": 67004,
+      "EXPIRED": 610,
+      "NOT_ACTIONABLE": 6048,
+      "SUPERSEDED": 0,
+      "open": 3422
+    },
+    "ordersCancelled": 77084,
+    "duplicatesReceived": 0,
+    "ivrReserved": 14262,
+    "ivrDuplicatePrevented": 0,
+    "lateAcks": 0,
+    "leaseTakeovers": 124
+  }
+}

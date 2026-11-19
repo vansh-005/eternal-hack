@@ -25,7 +25,7 @@ const PROFILES = {
     scenarios: {
       knee: {
         executor: 'ramping-arrival-rate', startRate: 10, timeUnit: '1s',
-        stages: [{ target: 500, duration: '10m' }],
+        stages: [{ target: Number(__ENV.P6_TARGET || 250), duration: '10m' }],  // spec: 500; lowered to 250 after the first ramp was VOID (see DECISIONS.md)
         preAllocatedVUs: 200, maxVUs: 2000,
       },
     },

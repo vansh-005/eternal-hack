@@ -1,0 +1,205 @@
+{
+  "runId": "run-20261119-1027-P6",
+  "profile": "P6",
+  "kind": "MEASURED",
+  "startedAt": "2026-11-19T04:57:21.653Z",
+  "durationSeconds": 1507,
+  "targetRate": 500,
+  "fault": null,
+  "replicas": 3,
+  "window": {
+    "from": "2026-11-19T04:57:52.000Z",
+    "to": "2026-11-19T05:08:12.000Z",
+    "seconds": 620,
+    "k6Seconds": 614.4
+  },
+  "verdict": "VOID",
+  "verdictReasons": [
+    "k6 dropped 1470 iterations: the laptop could not generate the load"
+  ],
+  "latency": {
+    "caseOpen": {
+      "n": 95552,
+      "p50": 4.7916,
+      "p95": 16.4144,
+      "p99": 21.8846,
+      "slo": 2,
+      "shareWithinSlo": 0.403429
+    },
+    "cardDelivery": {
+      "n": 95505,
+      "p50": 0.1256,
+      "p95": 0.5048,
+      "p99": 1.6892,
+      "slo": 2,
+      "shareWithinSlo": 0.993138,
+      "byClient": {
+        "tablet": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "slo": 2,
+          "shareWithinSlo": null
+        },
+        "swarm": {
+          "n": 95505,
+          "p50": 0.1256,
+          "p95": 0.5048,
+          "p99": 1.6892,
+          "slo": 2,
+          "shareWithinSlo": 0.993138
+        }
+      }
+    },
+    "cardRender": {
+      "n": 95486,
+      "p50": 0.2254,
+      "p95": 0.7783,
+      "p99": 2.2492,
+      "slo": 2,
+      "shareWithinSlo": 0.987066,
+      "byClient": {
+        "tablet": {
+          "n": 0,
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "slo": 2,
+          "shareWithinSlo": null
+        },
+        "swarm": {
+          "n": 95486,
+          "p50": 0.2254,
+          "p95": 0.7783,
+          "p99": 2.2492,
+          "slo": 2,
+          "shareWithinSlo": 0.987066
+        }
+      }
+    },
+    "ackApi": {
+      "n": 74613,
+      "p50": 0.0667,
+      "p95": 0.8902,
+      "p99": 2.0318,
+      "slo": 0.3,
+      "shareWithinSlo": 0.860929
+    },
+    "timerLateness": {
+      "L1": {
+        "n": 13918,
+        "p50": 1.7935,
+        "p95": 30,
+        "p99": 30,
+        "slo": 3,
+        "shareWithinSlo": 0.517059
+      },
+      "IVR": {
+        "n": 7088,
+        "p50": 19.747,
+        "p95": 30,
+        "p99": 30,
+        "slo": 3,
+        "shareWithinSlo": 0.316501
+      },
+      "EXPIRY": {
+        "n": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "slo": 3,
+        "shareWithinSlo": null
+      }
+    },
+    "ackFanout": {
+      "n": 78364,
+      "p50": 0.1521,
+      "p95": 2.4322,
+      "p99": 5.3804,
+      "slo": 2,
+      "shareWithinSlo": 0.92731
+    },
+    "consumeLag": {
+      "n": 103589,
+      "p50": 4.4662,
+      "p95": 16.2196,
+      "p99": 21.5719,
+      "slo": null,
+      "shareWithinSlo": null
+    },
+    "omsRead": {
+      "n": 125176,
+      "p50": 0.0073,
+      "p95": 0.0264,
+      "p99": 0.1,
+      "slo": null,
+      "shareWithinSlo": null
+    }
+  },
+  "throughput": {
+    "casesOpenedPerSecond": {
+      "mean": 155.533,
+      "max30s": 285.451
+    },
+    "acksPerSecond": {
+      "mean": 127.794,
+      "max30s": 208.828
+    },
+    "casesOpenedInWindow": 95552,
+    "firehoseAchieved": 13567,
+    "k6": {
+      "iterations": 151529,
+      "dropped": 1470,
+      "httpP99": 2.0416,
+      "httpFailedRate": 0.185293,
+      "testRunDurationSeconds": 601.7
+    }
+  },
+  "backlog": {
+    "queuePeak": 2750,
+    "drainSeconds": null,
+    "outboxPendingPeak": 505,
+    "omsOutboxPendingPeak": 1041,
+    "deadlinesOverduePeak": 22758,
+    "dlqAtEnd": null
+  },
+  "resources": {
+    "cpuPeakByReplica": {
+      "mock-oms": 0.203,
+      "nocook-1": 0.078,
+      "nocook-2": 0.079,
+      "nocook-3": 0.068
+    },
+    "heapPeakMbByReplica": {
+      "nocook-1": 96.3,
+      "nocook-2": 100.4,
+      "nocook-3": 102
+    },
+    "hikariPendingPeak": 187,
+    "omsHikariPendingPeak": 860,
+    "systemCpuPeak": 0.85,
+    "note": "process_cpu_usage is the JVM share of all host cores (0..1)"
+  },
+  "knee": {
+    "casesPerSecond": 178.374,
+    "p99AtKnee": 0.1151,
+    "windowStart": "2026-11-19T05:01:22.000Z",
+    "windows": 20,
+    "queueSlopeToleranceMsgPerSec": 0.05,
+    "peakWindowCasesPerSecond": 264.823
+  },
+  "bottleneck": null,
+  "invariantsPass": false,
+  "warnings": [],
+  "headline": "VOID: k6 dropped 1470 iterations: the laptop could not generate the load",
+  "grafana": {
+    "liveSlos": "http://localhost:3000/d/nocook-live-slos?orgId=1&from=1795064241653&to=1795065763739",
+    "reliability": "http://localhost:3000/d/nocook-reliability?orgId=1&from=1795064241653&to=1795065763739",
+    "load": "http://localhost:3000/d/nocook-load?orgId=1&from=1795064241653&to=1795065763739"
+  },
+  "notes": {
+    "p99Rule": "p99 is null when N < 1000",
+    "cardDeliveryIncludesSwarmLag": true
+  }
+}

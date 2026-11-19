@@ -1,24 +1,24 @@
 {
-  "runId": "run-20261119-0950-P5",
-  "profile": "P5",
+  "runId": "run-20261119-1027-P6",
+  "profile": "P6",
   "kind": "MEASURED",
-  "startedAt": "2026-11-19T04:20:50.459Z",
-  "k6StartedAt": "2026-11-19T04:21:21.031Z",
-  "k6EndedAt": null,
-  "endedAt": null,
+  "startedAt": "2026-11-19T04:57:21.653Z",
+  "k6StartedAt": "2026-11-19T04:57:52.189Z",
+  "k6EndedAt": "2026-11-19T05:08:06.541Z",
+  "endedAt": "2026-11-19T05:22:28.739Z",
   "window": {
     "from": null,
     "to": null
   },
   "rates": {
-    "cancelsPerSecond": 200,
+    "cancelsPerSecond": 500,
     "firehoseEventsPerSecond": 14000,
     "notionalOrdersPerSecond": 1400
   },
   "replicas": 3,
   "tracingSample": 1,
   "fault": null,
-  "commit": "a6400e6",
+  "commit": "3f5cd76",
   "dirty": true,
   "images": {
     "postgres": "postgres:18",
@@ -39,6 +39,7 @@
     "dockerCpus": 16,
     "dockerMemGb": 7.6
   },
-  "k6DurationSeconds": 300,
-  "note": "P5 burst"
+  "k6DurationSeconds": 600,
+  "note": "P6 knee ramp",
+  "error": "The operation was aborted due to timeout"
 }
